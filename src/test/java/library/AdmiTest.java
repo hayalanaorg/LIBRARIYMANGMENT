@@ -43,4 +43,44 @@ public class AdmiTest {
         assertFalse(adminService.isLoggedIn(), "Admin should be logged out after logout");
         assertNull(adminService.getCurrentAdmin(), "Current admin should be null after logout");
     }
+    
+    @Test
+    void testAddAndRemoveBook() {
+        adminService.login("admin", "1234");
+        Book book = new Book("Test Book", "Author", "001");
+        adminService.addBook(book);
+        assertEquals(1, ((AdminServiceImpl) adminService).getBooks().size());
+
+        adminService.removeBook(book);
+        assertEquals(0, ((AdminServiceImpl) adminService).getBooks().size());
+    }
+
+    @Test
+    void testUnregisterUser() {
+        adminService.login("admin", "1234");
+        user u = new user("u1", "pass", "Alice");
+        ((AdminServiceImpl) adminService).addUser(u);
+
+        adminService.unregisterUser(u);
+        assertEquals(0, ((AdminServiceImpl) adminService).getUsers().size());
+    }
+
+    @Test
+    void testUnregisterNonExistingUser() {
+        adminService.login("admin", "1234");
+        user u = new user("u2", "pass", "Bob");
+
+        assertThrows(IllegalStateException.class, () -> adminService.unregisterUser(u));
+    }
+    @Test
+    void testAuthenticate() {
+        Admin admin = new Admin("admin", "1234", "Library Admin");
+
+        // كلمة المرور صحيحة
+        assertTrue(admin.authenticate("1234"));
+
+        // كلمة المرور خاطئة
+        assertFalse(admin.authenticate("wrongpass"));
+    }
+
 }

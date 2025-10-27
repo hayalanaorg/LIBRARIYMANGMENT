@@ -1,6 +1,5 @@
 package library;
 
-
 public class Book {
     private String title;
     private String author;
@@ -20,6 +19,8 @@ public class Book {
     public boolean isAvailable() { return available; }
 
     public void setAvailable(boolean available) { this.available = available; }
+    public void markBorrowed() { available = false; }
+    public void markReturned() { available = true; }
 
     @Override
     public String toString() {
@@ -27,5 +28,3 @@ public class Book {
                 isbn, title, author, available ? "Available" : "Borrowed");
     }
 }
-
-

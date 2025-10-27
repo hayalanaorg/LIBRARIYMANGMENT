@@ -2,7 +2,9 @@ package library;
 
 
 
+
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class loan {
 
@@ -19,6 +21,15 @@ public class loan {
         this.dueDate = borrowDate.plusDays(28); // 28 يوم استعارة
         this.returned = false;
     }
+    
+    public loan(Book book, user user, LocalDate borrowDate, LocalDate dueDate) {
+        this.book = book;
+        this.user = user;
+        this.borrowDate = borrowDate;
+        this.dueDate = dueDate;
+        this.returned = false;
+    }
+
 
     public Book getBook() {
         return book;
@@ -46,5 +57,10 @@ public class loan {
 
     public boolean isOverdue() {
         return !returned && LocalDate.now().isAfter(dueDate);
+    }
+    
+    public long overdueDays() {
+        if (!isOverdue()) return 0;
+        return ChronoUnit.DAYS.between(dueDate, LocalDate.now());
     }
 }
