@@ -1,5 +1,6 @@
 package library;
 
+
 public class Book {
     private String title;
     private String author;
@@ -10,32 +11,21 @@ public class Book {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
-        this.available = true; // الكتاب متاح افتراضياً
+        this.available = true;
     }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() { return title; }
+    public String getAuthor() { return author; }
+    public String getIsbn() { return isbn; }
+    public boolean isAvailable() { return available; }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
+    public void setAvailable(boolean available) { this.available = available; }
 
     @Override
     public String toString() {
-        return title + " by " + author + " (ISBN: " + isbn + ")";
+        return String.format("[%s] %s by %s (%s)",
+                isbn, title, author, available ? "Available" : "Borrowed");
     }
 }
+
 

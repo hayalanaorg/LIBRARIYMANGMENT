@@ -1,27 +1,15 @@
 package library;
-public class Admin {
-    private String username;
-    private String password;
-    private boolean loggedIn = false;
+public class Admin extends user {
 
-    public Admin(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public Admin(String username, String password, String fullName) {
+        super(username, password, fullName);
     }
 
-    public boolean login(String username, String password) {
-        if (this.username.equals(username) && this.password.equals(password)) {
-            loggedIn = true;
-            return true;
-        }
-        return false;
+    public void addBook(Book book) {
+        System.out.println("Admin added: " + book);
     }
 
-    public void logout() {
-        loggedIn = false;
-    }
-
-    public boolean isLoggedIn() {
-        return loggedIn;
+    public void removeBook(Book book) {
+        System.out.println("Admin removed: " + book);
     }
 }
