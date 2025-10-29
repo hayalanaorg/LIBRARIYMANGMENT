@@ -63,4 +63,9 @@ public class loan {
         if (!isOverdue()) return 0;
         return ChronoUnit.DAYS.between(dueDate, LocalDate.now());
     }
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+	
 }

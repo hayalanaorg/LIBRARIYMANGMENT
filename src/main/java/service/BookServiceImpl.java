@@ -55,6 +55,9 @@ public class BookServiceImpl implements BookService {
             loan.getUser().addFine(fine);
         }
     }    
+
+    
     
 }
+
 
