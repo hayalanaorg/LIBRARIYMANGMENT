@@ -1,5 +1,5 @@
 package library;
 
-public class EmailMessage {
-
+public interface EmailMessage {
+    void sendEmail(user user, String message);
 }

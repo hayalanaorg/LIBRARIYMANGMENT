@@ -2,12 +2,17 @@ package service;
 
 import library.Admin;
 import library.Book;
+import library.EmailMessage;
 import library.user;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdminServiceImpl implements AdminService {
+	
+    private EmailMessage emailService; // حقن الخدمة عبر الكونستركتور
+
+	
     private Admin currentAdmin;
     private List<Book> books = new ArrayList<>();
     private List<user> users = new ArrayList<>();
@@ -56,4 +61,24 @@ public class AdminServiceImpl implements AdminService {
     public List<Book> getBooks() { return books; }
     public void addUser(user u) { users.add(u); }
     public List<user> getUsers() { return users; }
+    
+    public AdminServiceImpl( ) {
+        this.users = new ArrayList<>();
+    }
+    
+    public AdminServiceImpl(EmailMessage emailService) {
+        this.emailService = emailService;
+        this.users = new ArrayList<>();
+    }
+    @Override
+    public void sendReminders() {
+        for (user u : users) {
+            long overdueBooks = u.getLoans().stream().filter(l -> l.isOverdue()).count();
+            if (overdueBooks > 0) {
+                String message = "You have " + overdueBooks + " overdue book(s).";
+                emailService.sendEmail(u, message);
+            }
+        }
+    }
+
 }

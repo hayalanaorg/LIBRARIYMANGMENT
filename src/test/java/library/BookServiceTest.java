@@ -179,7 +179,7 @@ public class BookServiceTest {
         assertEquals(BigDecimal.ZERO, user.getFineBalance());
     }
 
- 
+  
 
 
 
@@ -195,5 +195,8 @@ public class BookServiceTest {
         assertEquals("Loan already returned", ex.getMessage());
     }
 
+    
+    
+    
     
 }

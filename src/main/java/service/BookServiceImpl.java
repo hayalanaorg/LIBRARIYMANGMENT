@@ -4,7 +4,9 @@ package service;
 import library.Book;
 import library.loan;
 import library.user;
+
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -51,13 +53,16 @@ public class BookServiceImpl implements BookService {
 
         long overdueDays = loan.overdueDays();
         if (overdueDays > 0) {
-            BigDecimal fine = BigDecimal.valueOf(overdueDays * 10); // 10 NIS per day
+            BigDecimal fine = BigDecimal.valueOf(overdueDays * 10); 
             loan.getUser().addFine(fine);
         }
     }    
 
     
-    
+ 
+
+
+
 }
 
 

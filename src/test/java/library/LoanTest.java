@@ -59,4 +59,21 @@ public class LoanTest {
         assertNotNull(loan.getDueDate(), "Due date should not be null");
         assertFalse(loan.isReturned(), "Loan should not be returned initially");
     }
+    
+    @Test
+    void testSetDueDate() {
+        // Arrange: إنشاء كتاب ومستخدم وإعارة
+        Book book = new Book("Test Book", "Author", "001");
+        user user = new user("u1", "pass", "Alice");
+        loan loan = new loan(book, user);
+
+        // القيمة الجديدة ل dueDate
+        LocalDate newDueDate = LocalDate.now().plusDays(10);
+
+        // Act: تغيير dueDate باستخدام setDueDate
+        loan.setDueDate(newDueDate);
+
+        // Assert: التأكد أن dueDate تغيّر فعليًا
+        assertEquals(newDueDate, loan.getDueDate(), "Due date should be updated correctly");
+    }
 }

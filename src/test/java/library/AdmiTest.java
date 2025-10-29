@@ -3,10 +3,12 @@ import service.AdminService;
 import service.AdminServiceImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -83,4 +85,24 @@ public class AdmiTest {
         assertFalse(admin.authenticate("wrongpass"));
     }
 
+    @Test
+    void testSendReminder() {
+        // Arrange
+    	EmailMessage emailMock = mock(EmailMessage.class);
+        AdminServiceImpl adminService = new AdminServiceImpl(emailMock);
+
+        user u1 = new user("u1", "123", "Alice");
+        Book b = new Book("Java", "Author", "001");
+        loan l = new loan(b, u1, LocalDate.now().minusDays(30), LocalDate.now().minusDays(5));
+        u1.addLoan(l);
+        adminService.addUser(u1);
+
+        // Act
+        adminService.sendReminders();
+
+        // Assert
+        verify(emailMock).sendEmail(u1, "You have 1 overdue book(s).");
+        verifyNoMoreInteractions(emailMock);
+    }
+    
 }

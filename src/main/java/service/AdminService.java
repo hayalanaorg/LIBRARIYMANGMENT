@@ -14,4 +14,5 @@ public interface AdminService {
     void addBook(Book book);
     void removeBook(Book book);
     void unregisterUser(user user) throws IllegalStateException;
+	void sendReminders();
 }

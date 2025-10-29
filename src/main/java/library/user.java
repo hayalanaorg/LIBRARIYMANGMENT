@@ -25,8 +25,13 @@ public class user {
 
     public void addLoan(loan loan) { loans.add(loan); }
 
-    public void addFine(BigDecimal amount) { fineBalance = fineBalance.add(amount); }
 
+    public void addFine(BigDecimal fine) {
+        if (fine != null && fine.compareTo(BigDecimal.ZERO) > 0) {
+            fineBalance = fineBalance.add(fine);
+        }
+    }
+    
     public void payFine(BigDecimal amount) { fineBalance = fineBalance.subtract(amount); }
 
     public BigDecimal getFineBalance() { return fineBalance; }
