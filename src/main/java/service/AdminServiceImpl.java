@@ -50,7 +50,15 @@ public class AdminServiceImpl implements AdminService {
     public void removeBook(Book book) {
         books.remove(book);
     }
-
+    
+    public user findUser(String username) {
+        for (user u : users) {
+            if (u.getUsername().equals(username)) {
+                return u;
+            }
+        }
+        return null; // إذا ما موجود
+    }
     @Override
     public void unregisterUser(user user) throws IllegalStateException {
         if (!users.contains(user)) throw new IllegalStateException("User not found");
@@ -80,5 +88,7 @@ public class AdminServiceImpl implements AdminService {
             }
         }
     }
+
+	
 
 }
