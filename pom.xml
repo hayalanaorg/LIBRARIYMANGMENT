@@ -9,7 +9,7 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <dependencies>
-    <!-- ✅ JUnit 5 -->
+    <!--  JUnit 5 -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -17,7 +17,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- ✅ Mockito -->
+    <!-- Mockito -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
@@ -28,24 +28,11 @@
 
   <build>
     <plugins>
-      <!-- ✅ Jacoco Plugin (مع استثناء presentation بالكامل) -->
+      <!--  Jacoco Plugin (مع استثناء presentation بالكامل) -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.10</version>
-
-        <configuration>
-          <excludes>
-            <!-- استثناء كل الكلاسات ضمن الواجهة (presentation) -->
-            <exclude>presentation/**</exclude>
-            <exclude>**/presentation/**</exclude>
-            <!-- استثناء أي كلاس اسمه Main أو main -->
-            <exclude>**/Main.class</exclude>
-            <exclude>**/main.class</exclude>
-            <exclude>**/Main$*.class</exclude>
-            <exclude>**/main$*.class</exclude>
-          </excludes>
-        </configuration>
 
         <executions>
           <execution>
