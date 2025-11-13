@@ -3,6 +3,7 @@ package service;
 import library.Admin;
 import library.Book;
 import library.EmailMessage;
+import library.loan;
 import library.user;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class AdminServiceImpl implements AdminService {
 	
     private Admin currentAdmin;
     private List<Book> books = new ArrayList<>();
-    private List<user> users = new ArrayList<>();
+    private static List<user> users = new ArrayList<>();
 
     @Override
     public boolean login(String username, String password) {
@@ -67,7 +68,7 @@ public class AdminServiceImpl implements AdminService {
 
     // مساعدات للتست
     public List<Book> getBooks() { return books; }
-    public void addUser(user u) { users.add(u); }
+    public static void addUser(user u) { users.add(u); }
     public List<user> getUsers() { return users; }
     
     public AdminServiceImpl( ) {
@@ -81,13 +82,16 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void sendReminders() {
         for (user u : users) {
-            long overdueBooks = u.getLoans().stream().filter(l -> l.isOverdue()).count();
-            if (overdueBooks > 0) {
-                String message = "You have " + overdueBooks + " overdue book(s).";
-                emailService.sendEmail(u, message);
+            long overdueCount = u.getLoans()
+                                 .stream()
+                                 .filter(loan::isOverdue)
+                                 .count();
+            if (overdueCount > 0) {
+            	emailService.sendEmail(u, "You have " + overdueCount + " overdue book(s).");
             }
         }
     }
+
 
 	
 

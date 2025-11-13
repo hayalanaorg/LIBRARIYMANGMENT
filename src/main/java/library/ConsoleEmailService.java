@@ -9,3 +9,4 @@ public class ConsoleEmailService implements EmailMessage {
         System.out.println("=====================");
     }
 }
+//  لازم نعملله تيست

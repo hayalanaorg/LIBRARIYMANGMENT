@@ -9,4 +9,5 @@ public class Admin extends user {
     public boolean authenticate(String password) {
         return getPassword().equals(password);
     }
-}
+    
+} 
