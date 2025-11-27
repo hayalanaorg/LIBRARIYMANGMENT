@@ -1,75 +1,70 @@
 package library;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 public class UserTest {
 
     @Test
-    public void testCanBorrowWithoutFines() {
-        user user = new user("u1", "pass", "Alice");
-        assertTrue(user.canBorrow());
+    void testConstructorAndGetters() {
+        user u = new user("10", "lana", "1234", "Lana Omar", false);
+
+        assertEquals("10", u.getId());
+        assertEquals("lana", u.getUsername());
+        assertEquals("1234", u.getPassword());
+        assertEquals("Lana Omar", u.getFullName());
+        assertFalse(u.isAdmin(), "User should not be admin");
+        assertTrue(u.isActive(), "User should be active when created");
     }
 
     @Test
-    public void testCannotBorrowWithFines() {
-        user user = new user("u2", "pass", "Bob");
-        user.addFine(BigDecimal.valueOf(20));
-        assertFalse(user.canBorrow());
+    void testAdminUser() {
+        user admin = new user("1", "admin", "pass", "System Admin", true);
+
+        assertTrue(admin.isAdmin());
+        assertEquals("System Admin", admin.getFullName());
     }
 
     @Test
-    public void testPayFinePartial() {
-        user user = new user("u3", "pass", "Charlie");
-        user.addFine(BigDecimal.valueOf(50));
-        user.payFine(BigDecimal.valueOf(30));
-        assertEquals(BigDecimal.valueOf(20), user.getFineBalance());
+    void testDeactivate() {
+        user u = new user("3", "test", "pass", "Test User", false);
+
+        assertTrue(u.isActive());
+        u.deactivate();
+        assertFalse(u.isActive(), "User should be inactive after deactivate()");
     }
 
     @Test
-    public void testPayFineFull() {
-        user user = new user("u4", "pass", "David");
-        user.addFine(BigDecimal.valueOf(40));
-        user.payFine(BigDecimal.valueOf(40));
-        assertEquals(BigDecimal.ZERO, user.getFineBalance());
-        assertTrue(user.canBorrow());
+    void testToStringFormat() {
+        user u = new user("4", "noor", "pass", "Noor Ahmad", false);
+
+        String text = u.toString();
+
+        assertNotNull(text);
+        assertTrue(text.contains("Noor Ahmad"));
+        assertTrue(text.contains("noor"));
+        assertEquals("Noor Ahmad (noor)", text);
     }
 
     @Test
-    public void testAddAndGetLoans() {
-        user user = new user("u5", "pass", "Eve");
-        loan l1 = new loan(null, user); // assuming you have a default constructor
-        loan l2 = new loan(null, user);
-        user.addLoan(l1);
-        user.addLoan(l2);
+    void testEdgeCases() {
+        user u = new user("", "", "", "", false);
 
-        List<loan> loans = user.getLoans();
-        assertEquals(2, loans.size());
-        assertTrue(loans.contains(l1));
-        assertTrue(loans.contains(l2));
+        assertEquals("", u.getId());
+        assertEquals("", u.getUsername());
+        assertEquals("", u.getPassword());
+        assertEquals("", u.getFullName());
+        assertFalse(u.isAdmin());
+        assertTrue(u.isActive());
+        assertEquals(" ()", u.toString());  
     }
 
     @Test
-    public void testToString() {
-        user user = new user("u6", "pass", "Frank");
-        user.addFine(BigDecimal.valueOf(15));
-        String str = user.toString();
-        assertTrue(str.contains("Frank"));
-        assertTrue(str.contains("u6"));
-        assertTrue(str.contains("15"));
-    }
-    
-    @Test
-    void testUserGetters() {
-        user u = new user("u1", "pass123", "Alice");
+    void testMultipleUsersIndependence() {
+        user u1 = new user("1", "lana", "pass1", "Lana", false);
+        user u2 = new user("2", "moh", "pass2", "Mohammed", false);
 
-        assertEquals("u1", u.getUsername());
-        assertEquals("pass123", u.getPassword());
-        assertEquals("Alice", u.getFullName());
+        assertNotEquals(u1.getUsername(), u2.getUsername());
+        assertNotEquals(u1.getId(), u2.getId());
     }
-
 }

@@ -1,13 +1,16 @@
 package library;
 
+/**
+ * Represents an administrator user.
+ */
 public class Admin extends user {
 
-    public Admin(String username, String password, String fullName) {
-        super(username, password, fullName);
+    public Admin(String id, String username, String password, String fullName) {
+        super(id, username, password, fullName, true);
     }
 
-    public boolean authenticate(String password) {
-        return getPassword().equals(password);
+    @Override
+    public String toString() {
+        return "Admin: " + getFullName();
     }
-    
-} 
+}

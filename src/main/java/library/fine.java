@@ -3,7 +3,7 @@ package library;
 
 public class fine {
 
-    private user user;
+    private library.user user;
     private double amount;
 
     public fine(user user, double amount) {

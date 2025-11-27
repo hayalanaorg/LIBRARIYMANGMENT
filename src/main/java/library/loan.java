@@ -1,41 +1,33 @@
 package library;
 
-
-
-
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Represents a loan of a single Book by a Member.
+ * Duration = 28 days.
+ */
 public class loan {
 
     private Book book;
-    private user user;
+    private Member user;
     private LocalDate borrowDate;
     private LocalDate dueDate;
-    private boolean returned;
+    private boolean returned = false;
 
-    public loan(Book book, user user) {
+    public loan(Book book, Member user) {
         this.book = book;
         this.user = user;
         this.borrowDate = LocalDate.now();
-        this.dueDate = borrowDate.plusDays(28); // 28 يوم استعارة
-        this.returned = false;
+        this.dueDate = borrowDate.plusDays(28);
     }
-    
-    public loan(Book book, user user, LocalDate borrowDate, LocalDate dueDate) {
-        this.book = book;
-        this.user = user;
-        this.borrowDate = borrowDate;
-        this.dueDate = dueDate;
-        this.returned = false;
-    }
-
 
     public Book getBook() {
         return book;
     }
 
-    public user getUser() {
+    public Member getUser() {
         return user;
     }
 
@@ -58,14 +50,43 @@ public class loan {
     public boolean isOverdue() {
         return !returned && LocalDate.now().isAfter(dueDate);
     }
-    
+
     public long overdueDays() {
         if (!isOverdue()) return 0;
         return ChronoUnit.DAYS.between(dueDate, LocalDate.now());
     }
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+
+    public long getOverdueDays(LocalDate now) {
+        if (now == null || returned) {
+            return 0;
+        }
+
+        if (now.isAfter(dueDate)) {
+            return java.time.temporal.ChronoUnit.DAYS.between(dueDate, now);
+        }
+
+        return 0;
     }
 
-	
+    public void isReturned2() {
+        this.returned = true;
+
+        // نرجّع حالة الكتاب
+        if (book != null) {
+            book.markReturned();
+        }
+    }
+
+    
+    public void setDueDate(LocalDate newDate) {
+        try {
+            Field f = this.getClass().getDeclaredField("dueDate");
+            f.setAccessible(true);
+            f.set(this, newDate);
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot modify due date", e);
+        }
+    }
+
+
 }

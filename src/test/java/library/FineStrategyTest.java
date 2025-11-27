@@ -11,17 +11,18 @@ import library.FineStrategy;
  */
 public class FineStrategyTest {
 
-    @Test
-    void testBookFine() {
-        FineStrategy bookFine = new BookFineStrategy();
-        assertEquals(30, bookFine.calculateFine(3)); // 3 أيام × 10 = 30
-    }
+	@Test
+	public void testBookFine() {
+	    FineStrategy s = new BookFineStrategy();
+	    assertEquals(30, s.calculateFine(3));
+	}
 
-    @Test
-    void testCDFine() {
-        FineStrategy cdFine = new CDFineStrategy();
-        assertEquals(60, cdFine.calculateFine(3)); // 3 أيام × 20 = 60
-    }
+	@Test
+	public void testCDFine() {
+	    FineStrategy s = new CDFineStrategy();
+	    assertEquals(60, s.calculateFine(3));
+	}
+
 
     @Test
     void testNoOverdue() {

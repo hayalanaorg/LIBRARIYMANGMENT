@@ -2,78 +2,175 @@ package library;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class LoanTest {
 
-    @Test
-    public void testNotOverdueInitially() {
-        Book book = new Book("Test", "Author", "ISBN");
-        user user = new user("u1", "pass", "Alice");
-        loan loan = new loan(book, user);
+    private Member member;
+    private Book book;
+    private loan ln;
 
-        loan.setReturned(false);
-        assertFalse(loan.isOverdue(), "Loan should not be overdue initially");
-        assertEquals(0, loan.overdueDays(), "Overdue days should be 0 initially");
+    @BeforeEach
+    void setup() {
+        member = new Member("1", "lana", "pass", "Lana", "mail@mail.com");
+        book = new Book("Java", "Oracle", "111");
+        ln = new loan(book, member);
+    }
+
+    // ============================================================
+    // CONSTRUCTOR + GETTERS
+    // ============================================================
+
+    @Test
+    void testConstructorAndGetters() {
+        assertEquals(book, ln.getBook());
+        assertEquals(member, ln.getUser());
+        assertNotNull(ln.getBorrowDate());
+        assertEquals(ln.getBorrowDate().plusDays(28), ln.getDueDate());
+        assertFalse(ln.isReturned());
+    }
+
+    // ============================================================
+    // RETURN LOGIC
+    // ============================================================
+
+    @Test
+    void testSetReturned() {
+        assertFalse(ln.isReturned());
+        ln.setReturned(true);
+        assertTrue(ln.isReturned());
     }
 
     @Test
-    public void testReturnedBookNotOverdue() {
-        Book book = new Book("Test", "Author", "ISBN");
-        user user = new user("u1", "pass", "Alice");
-        loan loan = new loan(book, user);
-
-        loan.setReturned(true);
-        assertFalse(loan.isOverdue(), "Returned book should not be overdue");
-        assertEquals(0, loan.overdueDays(), "Overdue days should be 0 for returned book");
+    void testSetReturnedFalse() {
+        ln.setReturned(true);
+        ln.setReturned(false);
+        assertFalse(ln.isReturned());
     }
 
     @Test
-    public void testOverdueBook() {
-        Book book = new Book("Test", "Author", "ISBN");
-        user user = new user("u1", "pass", "Alice");
+    void testIsReturned2() {
+        book.markBorrowed();    // book becomes unavailable
+        assertFalse(book.isAvailable());
 
-        // استخدمنا constructor الجديد لتحديد borrowDate و dueDate في الماضي
-        LocalDate borrowDate = LocalDate.now().minusDays(10);
-        LocalDate dueDate = LocalDate.now().minusDays(5);
-        loan loan = new loan(book, user, borrowDate, dueDate);
+        ln.isReturned2();       // sets returned + returns book
 
-        loan.setReturned(false);
+        assertTrue(ln.isReturned());
+        assertTrue(book.isAvailable());
+    }
 
-        assertTrue(loan.isOverdue(), "Book should be overdue");
-        assertEquals(5, loan.overdueDays(), "Overdue days should be 5");
+    // ============================================================
+    // OVERDUE LOGIC
+    // ============================================================
+
+    @Test
+    void testIsOverdueTrue() throws Exception {
+        // force overdue
+        Field f = loan.class.getDeclaredField("dueDate");
+        f.setAccessible(true);
+        f.set(ln, LocalDate.now().minusDays(3));
+
+        assertTrue(ln.isOverdue());
+        assertTrue(ln.overdueDays() >= 3);
     }
 
     @Test
-    public void testGetters() {
-        Book book = new Book("Test", "Author", "ISBN");
-        user user = new user("u1", "pass", "Alice");
-
-        loan loan = new loan(book, user);
-
-        assertEquals(book, loan.getBook(), "getBook should return the correct book");
-        assertEquals(user, loan.getUser(), "getUser should return the correct user");
-        assertNotNull(loan.getBorrowDate(), "Borrow date should not be null");
-        assertNotNull(loan.getDueDate(), "Due date should not be null");
-        assertFalse(loan.isReturned(), "Loan should not be returned initially");
+    void testIsOverdueFalse_NotPastDue() {
+        assertFalse(ln.isOverdue());
     }
-    
+
+    @Test
+    void testIsOverdueFalse_Returned() {
+        ln.setReturned(true);
+        assertFalse(ln.isOverdue());
+    }
+
+    // ============================================================
+    // overdueDays()
+    // ============================================================
+
+    @Test
+    void testOverdueDaysZeroWhenNotOverdue() {
+        assertEquals(0, ln.overdueDays());
+    }
+
+    @Test
+    void testOverdueDaysWhenReturned() throws Exception {
+        ln.setReturned(true);
+
+        Field f = loan.class.getDeclaredField("dueDate");
+        f.setAccessible(true);
+        f.set(ln, LocalDate.now().minusDays(5));
+
+        assertEquals(0, ln.overdueDays());
+    }
+
+    // ============================================================
+    // getOverdueDays(now)
+    // ============================================================
+
+    @Test
+    void testGetOverdueDaysNowNull() {
+        assertEquals(0, ln.getOverdueDays(null));
+    }
+
+    @Test
+    void testGetOverdueDaysReturned() {
+        ln.setReturned(true);
+        assertEquals(0, ln.getOverdueDays(LocalDate.now()));
+    }
+
+    @Test
+    void testGetOverdueDaysNotOverdue() {
+        assertEquals(0, ln.getOverdueDays(LocalDate.now()));
+    }
+
+    @Test
+    void testGetOverdueDaysOverdue() throws Exception {
+        LocalDate today = LocalDate.now();
+
+        Field f = loan.class.getDeclaredField("dueDate");
+        f.setAccessible(true);
+        f.set(ln, today.minusDays(7));
+
+        assertEquals(7, ln.getOverdueDays(today));
+    }
+
+    @Test
+    void testGetOverdueDaysAfterMultipleDays() throws Exception {
+        LocalDate today = LocalDate.now();
+
+        Field f = loan.class.getDeclaredField("dueDate");
+        f.setAccessible(true);
+        f.set(ln, today.minusDays(12));
+
+        assertEquals(12, ln.getOverdueDays(today));
+    }
+
+    // ============================================================
+    // setDueDate()
+    // ============================================================
+
     @Test
     void testSetDueDate() {
-        // Arrange: إنشاء كتاب ومستخدم وإعارة
-        Book book = new Book("Test Book", "Author", "001");
-        user user = new user("u1", "pass", "Alice");
-        loan loan = new loan(book, user);
+        LocalDate newDate = LocalDate.now().plusDays(10);
+        ln.setDueDate(newDate);
+        assertEquals(newDate, ln.getDueDate());
+    }
 
-        // القيمة الجديدة ل dueDate
-        LocalDate newDueDate = LocalDate.now().plusDays(10);
+    @Test
+    void testSetDueDatePast() {
+        LocalDate past = LocalDate.now().minusDays(10);
+        ln.setDueDate(past);
+        assertEquals(past, ln.getDueDate());
+    }
 
-        // Act: تغيير dueDate باستخدام setDueDate
-        loan.setDueDate(newDueDate);
-
-        // Assert: التأكد أن dueDate تغيّر فعليًا
-        assertEquals(newDueDate, loan.getDueDate(), "Due date should be updated correctly");
+    @Test
+    void testSetDueDateDoesNotBreak() {
+        assertDoesNotThrow(() -> ln.setDueDate(LocalDate.now()));
     }
 }

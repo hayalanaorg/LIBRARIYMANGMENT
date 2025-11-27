@@ -1,45 +1,58 @@
 package library;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Base class for all system users (Admin or Member).
+ */
 public class user {
+
+    private String id;
     private String username;
     private String password;
     private String fullName;
-    private BigDecimal fineBalance = BigDecimal.ZERO;
-    private List<loan> loans = new ArrayList<>();
+    private boolean admin;
+    private boolean active;
 
-    public user(String username, String password, String fullName) {
+    public user(String id, String username, String password, String fullName, boolean admin) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.fullName = fullName;
+        this.admin = admin;
+        this.active = true;
     }
 
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
-    public String getFullName() { return fullName; }
-
-    public List<loan> getLoans() { return loans; }
-
-    public void addLoan(loan loan) { loans.add(loan); }
-
-
-    public void addFine(BigDecimal fine) {
-        if (fine != null && fine.compareTo(BigDecimal.ZERO) > 0) {
-            fineBalance = fineBalance.add(fine);
-        }
+    public String getId() {
+        return id;
     }
-    
-    public void payFine(BigDecimal amount) { fineBalance = fineBalance.subtract(amount); }
 
-    public BigDecimal getFineBalance() { return fineBalance; }
+    public String getUsername() {
+        return username;
+    }
 
-    public boolean canBorrow() { return fineBalance.compareTo(BigDecimal.ZERO) == 0; }
+    public String getPassword() {
+        return password;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
 
     @Override
     public String toString() {
-        return String.format("User: %s (%s) - Fine: %s", fullName, username, fineBalance);
+        return String.format("%s (%s)", fullName, username);
     }
+
+	
 }

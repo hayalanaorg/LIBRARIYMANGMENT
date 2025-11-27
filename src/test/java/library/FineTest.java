@@ -12,7 +12,7 @@ public class FineTest {
 
     @BeforeEach
     void setUp() {
-        user = new user("user1", "pass", "Alice");
+        user = new user("u1", "Alice", "pass", "Alice vatial", true);
         fine = new fine(user, 100.0);
     }
 

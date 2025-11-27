@@ -1,30 +1,47 @@
 package library;
 
+/**
+ * Represents a book in the library.
+ */
 public class Book {
+
     private String title;
     private String author;
     private String isbn;
-    private boolean available;
+    private boolean available = true;
 
-         public Book(String title, String author, String isbn) {
+    public Book(String title, String author, String isbn) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void markBorrowed() {
+        this.available = false;
+    }
+
+    public void markReturned() {
         this.available = true;
     }
 
-    public String getTitle() { return title; }
-    public String getAuthor() { return author; }
-    public String getIsbn() { return isbn; }
-    public boolean isAvailable() { return available; }
-
-    public void setAvailable(boolean available) { this.available = available; }
-    public void markBorrowed() { available = false; }
-    public void markReturned() { available = true; }
-
     @Override
     public String toString() {
-        return String.format("[%s] %s by %s (%s)",
-                isbn, title, author, available ? "Available" : "Borrowed");
+        return title + " by " + author + " (ISBN: " + isbn + ")";
     }
 }
