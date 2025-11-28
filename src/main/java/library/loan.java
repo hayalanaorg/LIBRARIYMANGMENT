@@ -51,15 +51,28 @@ public class loan {
         return !returned && LocalDate.now().isAfter(dueDate);
     }
 
+
     public long overdueDays() {
-        if (!isOverdue()) return 0;
-        return ChronoUnit.DAYS.between(dueDate, LocalDate.now());
+        // إذا الكتاب مُعاد → نرجّع 0
+        if (returned) {
+            return 0;
+        }
+
+        LocalDate now = LocalDate.now();
+        if (now.isAfter(dueDate)) {
+            return ChronoUnit.DAYS.between(dueDate, now);
+        }
+
+        return 0;
     }
+
+
 
     public long getOverdueDays(LocalDate now) {
         if (now == null || returned) {
             return 0;
         }
+        
 
         if (now.isAfter(dueDate)) {
             return java.time.temporal.ChronoUnit.DAYS.between(dueDate, now);

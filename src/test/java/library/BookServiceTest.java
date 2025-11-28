@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,21 @@ public class BookServiceTest {
 
         assertEquals(1, bookService.searchBook("java").size());
     }
+    @Test
+    void testSearchBookByAuthor() {
+        Book b = new Book("Java", "Oracle", "111");
+        bookService.addBook(b);
+
+        assertEquals(1, bookService.searchBook("oracle").size());
+    }
+    @Test
+    void testSearchBookByIsbn() {
+        Book b = new Book("Networks", "Kurose", "B200");
+        bookService.addBook(b);
+
+        assertEquals(1, bookService.searchBook("b200").size());
+    }
+
 
     @Test
     void testBorrowBookSuccess() throws Exception {
@@ -67,6 +83,7 @@ public class BookServiceTest {
         });
     }
 
+
     @Test
     void testBorrowBookUserHasUnpaidFine() {
         Book b = new Book("Java", "Oracle", "111");
@@ -85,11 +102,11 @@ public class BookServiceTest {
 
         Member m = new Member("1", "lana", "pass", "Lana", "lana@mail.com");
 
-        // create a loan that is overdue
+        // Create a loan that is overdue
         loan ln = new loan(b, m);
         m.addLoan(ln);
 
-        // force overdue by modifying dueDate
+        // Make it overdue
         try {
             Field dueField = loan.class.getDeclaredField("dueDate");
             dueField.setAccessible(true);
@@ -99,7 +116,6 @@ public class BookServiceTest {
         assertThrows(Exception.class, () -> bookService.borrowBook(b, m),
                 "User with overdue loans cannot borrow");
     }
-
 
     @Test
     void testReturnBookSuccess() throws Exception {
@@ -127,38 +143,79 @@ public class BookServiceTest {
 
         loan ln = bookService.borrowBook(b, m);
 
-        // نعمل overdue حقيقي بإنزال dueDate للخلف 3 أيام
+        // make overdue 3 days
         Field dueField = loan.class.getDeclaredField("dueDate");
         dueField.setAccessible(true);
         dueField.set(ln, LocalDate.now().minusDays(3));
 
         bookService.returnBook(ln);
 
-        assertFalse(m.getFineBalance().compareTo(BigDecimal.ZERO) > 0,
-                "Fine should be added for overdue loan");
+        // يجب يكون في غرامة (3 أيام × 10 = 30)
+        assertTrue(m.getFineBalance().compareTo(BigDecimal.ZERO) > 0,
+                "Fine should be added for an overdue loan");
     }
+
     @Test
     void testBookToString() {
         Book book = new Book("Networks", "Kurose", "B200");
 
         String text = book.toString();
 
-        // 1) not null
         assertNotNull(text);
-
-        // 2) يحتوي كل القيم
         assertTrue(text.contains("Networks"));
         assertTrue(text.contains("Kurose"));
         assertTrue(text.contains("B200"));
-
-        // 3) التنسيق الصحيح 1:1
         assertEquals("Networks by Kurose (ISBN: B200)", text);
-
-        // 4) يبدأ بالعنوان
         assertTrue(text.startsWith("Networks"));
-
-        // 5) يتضمن كلمة "by"
         assertTrue(text.contains(" by "));
+    }
+    @Test
+    void testReturnBookAlreadyReturned() throws Exception {
+        Book b = new Book("Java", "Oracle", "111");
+        bookService.addBook(b);
+
+        Member m = new Member("1", "lana", "pass", "Lana", "lana@mail.com");
+
+        loan ln = bookService.borrowBook(b, m);
+
+        // نعمله returned قبل ما نرجعه مرة ثانية
+        ln.setReturned(true);
+
+        assertThrows(Exception.class, () -> {
+            bookService.returnBook(ln);
+        });
+    }
+
+    @Test
+    void testSearchBookWithNullKeyword() {
+        Book b = new Book("Java", "Oracle", "111");
+        bookService.addBook(b);
+
+        List<Book> result = bookService.searchBook(null);
+
+        assertEquals(1, result.size());
+    }
+    @Test
+    void testReturnBookNullLoan() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            bookService.returnBook(null);
+        });
+    }
+
+    @Test
+    void testBorrowBookNullBook() {
+        Member m = new Member("1", "lana", "pass", "Lana", "lana@mail.com");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> bookService.borrowBook(null, m));
+    }
+    @Test
+    void testBorrowBookNullMember() {
+        Book b = new Book("Java", "Oracle", "111");
+        bookService.addBook(b);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> bookService.borrowBook(b, null));
     }
 
 }

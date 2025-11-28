@@ -127,4 +127,54 @@ public class MediaLoanTest {
 
         assertTrue(cd.isAvailable());
     }
+    @Test
+    void testGetBorrowDate() {
+        LocalDate today = LocalDate.now();
+        Book b = new Book("Java", "Oracle", "111");
+
+        MediaLoan ml = new MediaLoan(b, today);
+
+        assertEquals(today, ml.getBorrowDate());
+    }
+    @Test
+    void testGetDueDateFixed() {
+        Book b = new Book("Java", "Oracle", "111");
+
+        LocalDate borrow = LocalDate.of(2024, 1, 1);
+        MediaLoan ml = new MediaLoan(b, borrow);
+
+        assertEquals(borrow.plusDays(28), ml.getDueDate());
+    }
+    @Test
+    void testIsReturnedDirectly() {
+        Book b = new Book("Java", "Oracle", "111");
+        MediaLoan ml = new MediaLoan(b, LocalDate.now());
+
+        assertFalse(ml.isReturned());
+
+        ml.markReturned();
+
+        assertTrue(ml.isReturned());
+    }
+    @Test
+    void testGetOverdueDaysNotOverdue() {
+        Book b = new Book("Java", "Oracle", "111");
+        MediaLoan ml = new MediaLoan(b, LocalDate.now());
+
+        assertEquals(0, ml.getOverdueDays());
+    }
+    @Test
+    void testGetOverdueDaysOverdue() {
+        Book b = new Book("Java", "Oracle", "111");
+
+        // Borrow date = 30 days ago → due = +28 → overdue = 2 days
+        LocalDate borrow = LocalDate.now().minusDays(30);
+
+        MediaLoan ml = new MediaLoan(b, borrow);
+
+        int days = ml.getOverdueDays();  
+
+        assertEquals(2, days);  // 30 - 28 = 2
+    }
+
 }

@@ -109,6 +109,7 @@ public class LoanTest {
         assertEquals(0, ln.overdueDays());
     }
 
+
     // ============================================================
     // getOverdueDays(now)
     // ============================================================
@@ -173,4 +174,5 @@ public class LoanTest {
     void testSetDueDateDoesNotBreak() {
         assertDoesNotThrow(() -> ln.setDueDate(LocalDate.now()));
     }
+    
 }

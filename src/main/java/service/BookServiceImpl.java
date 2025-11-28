@@ -69,16 +69,16 @@ public class BookServiceImpl implements BookService {
             throw new Exception("Loan already returned");
         }
 
+        // ✔ احسب التأخير قبل تغيير الحالة
+        long overdueDays = loan.overdueDays();
+
         loan.setReturned(true);
         loan.getBook().markReturned();
 
-        long overdueDays = loan.overdueDays();
         if (overdueDays > 0) {
             BigDecimal fineAmount = BigDecimal.valueOf(overdueDays * 10);
-            if (loan.getUser() instanceof Member) {
-                Member member = (Member) loan.getUser();
-                member.addFine(fineAmount);
-            }
+            loan.getUser().addFine(fineAmount);
         }
     }
+
 }
