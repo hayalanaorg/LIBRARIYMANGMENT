@@ -1,7 +1,12 @@
 package library;
 
 /**
- * Represents a book in the library.
+ * Represents a book in the library system.
+ * Contains information about the book and its availability status.
+ * 
+ * @author Haya Wadah Abdat
+ * @version 1.0
+ * @since 2025-12-06
  */
 public class Book {
 
@@ -27,7 +32,11 @@ public class Book {
     public String getIsbn() {
         return isbn;
     }
-
+    /**
+     * Checks if the book is available for borrowing.
+     * 
+     * @return true if available, false if currently borrowed
+     */
     public boolean isAvailable() {
         return available;
     }
