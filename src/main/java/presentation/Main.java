@@ -1,5 +1,5 @@
 package presentation;
-
+/*
 import library.*;
 import service.*;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -8,26 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-/**
- * Entry point of the Library Management System.
- *
- * <p>This class represents the console-based user interface layer of the
- * system. It displays menus, receives user input, and delegates actions
- * to service classes.</p>
- *
- * <h2>Responsibilities:</h2>
- * <ul>
- *     <li>Show login menu</li>
- *     <li>Route Admin vs Member actions</li>
- *     <li>Allow borrowing/returning books and CDs</li>
- *     <li>Handle fine payments</li>
- *     <li>Send overdue email notifications</li>
- * </ul>
- *
- * @author Lana Omar
- * @version 1.0
- * @since 2025-12-07
- */
+
 public class Main {
 
     static Scanner input = new Scanner(System.in);
@@ -55,34 +36,26 @@ public class Main {
 
     static AdminServiceImpl adminService = new AdminServiceImpl();
     static BookServiceImpl bookService = new BookServiceImpl();
-
+    
     static Admin currentAdmin = null;
-
+    
     static EmailService emailService;
     static Observer emailNotifier;
 
-    /**
-     * Main entry point of the program.
-     *
-     * <p>Initializes email service, loads admin accounts,
-     * and starts the login menu loop.</p>
-     *
-     * @param args command-line arguments (unused)
-     */
     public static void main(String[] args) {
-
-        try {
-            Dotenv dotenv = Dotenv.load();
-            EmailService service = new EmailService(
-                    dotenv.get("EMAIL_USERNAME"),
-                    dotenv.get("EMAIL_PASSWORD")
-            );
-
-            service.sendEmail("test@example.com", "Test", "Hello!");
-            System.out.println("✔ Email sent successfully!");
-        } catch (Exception e) {
-            System.err.println("✖ Failed: " + e.getMessage());
-        }
+        
+    	 try {
+    	        Dotenv dotenv = Dotenv.load();
+    	        EmailService service = new EmailService(
+    	            dotenv.get("EMAIL_USERNAME"),
+    	            dotenv.get("EMAIL_PASSWORD")
+    	        );
+    	        
+    	        service.sendEmail("test@example.com", "Test", "Hello!");
+    	        System.out.println("✔ Email sent successfully!");
+    	    } catch (Exception e) {
+    	        System.err.println("✖ Failed: " + e.getMessage());
+    	    }
 
         Admin superAdmin = new Admin("1", "superadmin", "1234", "Super Admin");
         superAdmin.setRole("SUPER_ADMIN");
@@ -122,12 +95,6 @@ public class Main {
     }
 
     // ===================== LOGIN =====================
-
-    /**
-     * Handles login for both Admin and Member accounts.
-     *
-     * @return the authenticated {@link user} or {@code null} if failed
-     */
     private static user login() {
         String username = readLine("Username: ");
         String password = readLine("Password: ");
@@ -153,12 +120,6 @@ public class Main {
     }
 
     // ===================== SUPER ADMIN MENU =====================
-
-    /**
-     * Displays and handles the Super Admin menu, including full system control.
-     *
-     * @param a the logged-in super admin
-     */
     private static void superAdminMenu(Admin a) {
         while (true) {
             System.out.println("\n--- Super Admin Menu ---");
@@ -200,12 +161,6 @@ public class Main {
     }
 
     // ===================== SMALL ADMIN MENU =====================
-
-    /**
-     * Displays menu for Small Admin with limited privileges.
-     *
-     * @param a the small admin user
-     */
     private static void smallAdminMenu(Admin a) {
         while (true) {
             System.out.println("\n--- Small Admin Menu ---");
@@ -227,12 +182,6 @@ public class Main {
     }
 
     // ===================== MEMBER MENU =====================
-
-    /**
-     * Displays and handles the Member menu.
-     *
-     * @param m the logged-in member
-     */
     private static void memberMenu(Member m) {
         while (true) {
             System.out.println("\n--- Member Menu ---");
@@ -259,39 +208,22 @@ public class Main {
     }
 
     // ===================== HELPERS =====================
-
-    /**
-     * Reads a full line of text from console input.
-     *
-     * @param msg the prompt to display
-     * @return the entered text
-     */
     private static String readLine(String msg) {
         System.out.print(msg);
         return input.nextLine();
     }
 
-    /**
-     * Reads an integer from user input.
-     *
-     * @param msg the prompt to display
-     * @return parsed integer or -1 if invalid
-     */
     private static int readInt(String msg) {
-        try {
-            System.out.print(msg);
-            return Integer.parseInt(input.nextLine());
+        try { 
+            System.out.print(msg); 
+            return Integer.parseInt(input.nextLine()); 
         }
-        catch (Exception e) {
-            return -1;
+        catch (Exception e) { 
+            return -1; 
         }
     }
 
     // ===================== MEMBER/ADMIN FUNCTIONS =====================
-
-    /**
-     * Adds a new member to the library. Requires admin authentication.
-     */
     private static void addMember() {
         if (currentAdmin == null) {
             System.out.println("✖ Admin must login first!");
@@ -310,40 +242,34 @@ public class Main {
         System.out.println("✔ Member added successfully by " + currentAdmin.getUsername());
     }
 
-    /**
-     * Unregisters an existing member after validation.
-     */
     private static void unregisterMember() {
         if (currentAdmin == null) {
             System.out.println("✖ Admin must login first!");
             return;
         }
-
+        
         String username = readLine("Member username: ");
         Member m = findMember(username);
-        if (m == null) {
-            System.out.println("✖ Member not found");
-            return;
+        if (m == null) { 
+            System.out.println("✖ Member not found"); 
+            return; 
         }
 
-        try {
-            adminService.unregisterUser(m);
-            System.out.println("✔ Member unregistered successfully");
+        try { 
+            adminService.unregisterUser(m); 
+            System.out.println("✔ Member unregistered successfully"); 
         }
-        catch (Exception e) {
-            System.out.println("✖ " + e.getMessage());
+        catch (Exception e) { 
+            System.out.println("✖ " + e.getMessage()); 
         }
     }
 
-    /**
-     * Adds a book to the library collection. Requires admin authentication.
-     */
     private static void addBook() {
         if (currentAdmin == null) {
             System.out.println("✖ Admin must login first!");
             return;
         }
-
+        
         String title = readLine("Book title: ");
         String author = readLine("Author: ");
         String isbn = readLine("ISBN: ");
@@ -354,12 +280,6 @@ public class Main {
         System.out.println("✔ Book added successfully by " + currentAdmin.getUsername());
     }
 
-    /**
-     * Searches for a member by username.
-     *
-     * @param username the username to search
-     * @return matching member or null
-     */
     private static Member findMember(String username) {
         for (int i = 0; i < memberCount; i++)
             if (members[i].getUsername().equals(username))
@@ -367,12 +287,6 @@ public class Main {
         return null;
     }
 
-    /**
-     * Finds a book by ISBN identifier.
-     *
-     * @param isbn the book ISBN
-     * @return the matching book or null
-     */
     private static Book findBook(String isbn) {
         for (int i = 0; i < bookCount; i++)
             if (books[i].getIsbn().equals(isbn))
@@ -381,35 +295,26 @@ public class Main {
     }
 
     // ===================== BORROW / RETURN BOOK =====================
-
-    /**
-     * Borrows a book for a user given their username.
-     */
     private static void borrowBook() {
         String username = readLine("Member username: ");
         Member m = findMember(username);
-        if (m == null) {
-            System.out.println("✖ Member not found");
-            return;
+        if (m == null) { 
+            System.out.println("✖ Member not found"); 
+            return; 
         }
         borrowBook(m);
     }
 
-    /**
-     * Allows a specific member to borrow a book.
-     *
-     * @param m the borrowing member
-     */
     private static void borrowBook(Member m) {
         String isbn = readLine("Book ISBN: ");
         Book b = findBook(isbn);
-        if (b == null) {
-            System.out.println("✖ Book not found");
-            return;
+        if (b == null) { 
+            System.out.println("✖ Book not found"); 
+            return; 
         }
-        if (!b.isAvailable()) {
-            System.out.println("✖ Book already borrowed");
-            return;
+        if (!b.isAvailable()) { 
+            System.out.println("✖ Book already borrowed"); 
+            return; 
         }
 
         loan ln = new loan(b, m);
@@ -420,34 +325,27 @@ public class Main {
         b.markBorrowed();
         System.out.println("✔ Book borrowed successfully!");
         System.out.println("📅 Due date: " + ln.getDueDate());
-
+        
+        // Check for overdue books and send reminder automatically
         checkAndSendOverdueReminder(m);
     }
 
-    /**
-     * Returns a book for a member identified by username.
-     */
     private static void returnBook() {
         String username = readLine("Member username: ");
         Member m = findMember(username);
-        if (m == null) {
-            System.out.println("✖ Member not found");
-            return;
+        if (m == null) { 
+            System.out.println("✖ Member not found"); 
+            return; 
         }
         returnBook(m);
     }
 
-    /**
-     * Returns a specific book borrowed by a member.
-     *
-     * @param m the member returning the book
-     */
     private static void returnBook(Member m) {
         String isbn = readLine("Book ISBN: ");
         Book b = findBook(isbn);
-        if (b == null) {
-            System.out.println("✖ Book not found");
-            return;
+        if (b == null) { 
+            System.out.println("✖ Book not found"); 
+            return; 
         }
 
         loan ln = null;
@@ -459,11 +357,12 @@ public class Main {
             }
         }
 
-        if (ln == null) {
-            System.out.println("✖ No active loan found for this book");
-            return;
+        if (ln == null) { 
+            System.out.println("✖ No active loan found for this book"); 
+            return; 
         }
 
+        // Check if book was overdue and send email before returning
         if (ln.isOverdue()) {
             sendOverdueEmailForLoan(m, ln);
         }
@@ -474,60 +373,46 @@ public class Main {
     }
 
     // ===================== PAY FINE =====================
-
-    /**
-     * Allows admin to pay fine for a member given their username.
-     */
-
     private static void payFine() {
         String username = readLine("Member username: ");
         Member m = findMember(username);
-        if (m == null) {
-            System.out.println("✖ Member not found");
-            return;
+        if (m == null) { 
+            System.out.println("✖ Member not found"); 
+            return; 
         }
         payFine(m);
     }
 
-    /**
-     * Allows a member to pay fines.
-     *
-     * @param m the member paying the fine
-     */
     private static void payFine(Member m) {
         BigDecimal totalFine = calculateCurrentFine(m);
         BigDecimal registeredFine = m.getFineBalance();
         BigDecimal overdueFine = totalFine.subtract(registeredFine);
-
+        
         System.out.println("💰 Registered fine: " + registeredFine + " NIS");
         System.out.println("⚠  Overdue fine: " + overdueFine + " NIS");
         System.out.println("📊 Total fine: " + totalFine + " NIS");
         System.out.println();
-
+        
         if (totalFine.compareTo(BigDecimal.ZERO) == 0) {
             System.out.println("✔ No fines to pay!");
             return;
         }
-
+        
         BigDecimal amt = new BigDecimal(readLine("Amount to pay: "));
-
+        
         if (amt.compareTo(totalFine) > 0) {
             System.out.println("⚠  Amount exceeds total fine. Paying full amount: " + totalFine + " NIS");
             amt = totalFine;
         }
-
+        
         m.payFine(amt);
         BigDecimal remaining = calculateCurrentFine(m);
-
+        
         System.out.println("✔ Fine paid successfully!");
         System.out.println("💰 Remaining balance: " + remaining + " NIS");
     }
 
     // ===================== SHOW =====================
-
-    /**
-     * Displays all registered members and their fine/overdue details.
-     */
     private static void showMembers() {
         System.out.println("\n==== Members List ====");
         if (memberCount == 0) {
@@ -541,16 +426,11 @@ public class Main {
             System.out.println("- " + m.getUsername() + " | Fine: " + totalFine + " NIS" + overdueBooks);
         }
     }
-
-    /**
-     * Calculates the current fine for a member including live overdue fines.
-     *
-     * @param m the member to check
-     * @return the total fine amount
-     */
+    
+   
     private static BigDecimal calculateCurrentFine(Member m) {
         BigDecimal total = m.getFineBalance();
-
+        
         for (int i = 0; i < loanCount; i++) {
             loan ln = loans[i];
             if (ln != null && ln.getUser().equals(m) && !ln.isReturned()) {
@@ -560,16 +440,11 @@ public class Main {
                 }
             }
         }
-
+        
         return total;
     }
-
-    /**
-     * Counts overdue books for a specific member.
-     *
-     * @param m the member
-     * @return formatted text showing overdue count
-     */
+    
+   
     private static String getOverdueBookCount(Member m) {
         int overdueCount = 0;
         for (int i = 0; i < loanCount; i++) {
@@ -581,9 +456,6 @@ public class Main {
         return overdueCount > 0 ? " [" + overdueCount + " overdue book(s)]" : "";
     }
 
-    /**
-     * Displays all books with availability status.
-     */
     private static void showBooks() {
         System.out.println("\n==== Books List ====");
         if (bookCount == 0) {
@@ -593,25 +465,16 @@ public class Main {
         for (int i = 0; i < bookCount; i++) {
             Book b = books[i];
             String status = b.isAvailable() ? "✓ Available" : "✗ Borrowed";
-            System.out.println("- " + b.getTitle() + " by " + b.getAuthor() +
-                    " (ISBN: " + b.getIsbn() + ") [" + status + "]");
+            System.out.println("- " + b.getTitle() + " by " + b.getAuthor() + " (ISBN: " + b.getIsbn() + ") [" + status + "]");
         }
     }
 
-    /**
-     * Displays borrowed books for all members.
-     */
     private static void showUserBorrowedBooks() {
         System.out.println("\n==== All Borrowed Books ====");
         for (int i = 0; i < memberCount; i++)
             showUserBorrowedBooks(members[i]);
     }
 
-    /**
-     * Displays borrowed books for a specific member.
-     *
-     * @param m the member
-     */
     private static void showUserBorrowedBooks(Member m) {
         System.out.println("\n📚 Borrowed books for " + m.getUsername() + ":");
         boolean found = false;
@@ -624,9 +487,7 @@ public class Main {
                     int fine = days * 10;
                     overdueInfo = " ⚠ OVERDUE by " + days + " days (Fine: " + fine + " NIS)";
                 }
-                System.out.println("  - " + ln.getBook().getTitle() +
-                        " | ISBN: " + ln.getBook().getIsbn() +
-                        " | Due: " + ln.getDueDate() + overdueInfo);
+                System.out.println("  - " + ln.getBook().getTitle() + " | ISBN: " + ln.getBook().getIsbn() + " | Due: " + ln.getDueDate() + overdueInfo);
                 found = true;
             }
         }
@@ -634,40 +495,31 @@ public class Main {
     }
 
     // ===================== BORROW / RETURN CD =====================
-
-    /**
-     * Borrows a CD for a member using their username.
-     */
     private static void borrowCD() {
         String username = readLine("Member username: ");
         Member m = findMember(username);
-        if (m == null) {
-            System.out.println("✖ Member not found");
-            return;
+        if (m == null) { 
+            System.out.println("✖ Member not found"); 
+            return; 
         }
         borrowCD(m);
     }
 
-    /**
-     * Allows a specific member to borrow a CD.
-     *
-     * @param m the member borrowing the CD
-     */
     private static void borrowCD(Member m) {
         String title = readLine("CD Title: ");
         CD cd = null;
         for (int i = 0; i < cdCount; i++)
-            if (cds[i].getTitle().equalsIgnoreCase(title)) {
-                cd = cds[i];
-                break;
+            if (cds[i].getTitle().equalsIgnoreCase(title)) { 
+                cd = cds[i]; 
+                break; 
             }
-        if (cd == null) {
-            System.out.println("✖ CD not found");
-            return;
+        if (cd == null) { 
+            System.out.println("✖ CD not found"); 
+            return; 
         }
-        if (!cd.isAvailable()) {
-            System.out.println("✖ CD already borrowed");
-            return;
+        if (!cd.isAvailable()) { 
+            System.out.println("✖ CD already borrowed"); 
+            return; 
         }
 
         MediaLoan ml = new MediaLoan(cd, LocalDate.now());
@@ -677,60 +529,44 @@ public class Main {
         System.out.println("📅 Due date: " + ml.getDueDate());
     }
 
-    /**
-     * Returns a CD for a member using their username.
-     */
     private static void returnCD() {
         String username = readLine("Member username: ");
         Member m = findMember(username);
-        if (m == null) {
-            System.out.println("✖ Member not found");
-            return;
+        if (m == null) { 
+            System.out.println("✖ Member not found"); 
+            return; 
         }
         returnCD(m);
     }
 
-    /**
-     * Returns a CD borrowed by a specific member.
-     *
-     * @param m the member returning the CD
-     */
     private static void returnCD(Member m) {
         String title = readLine("CD Title: ");
         MediaLoan ml = null;
         for (int i = 0; i < mediaLoanCount; i++) {
-            if (mediaLoans[i] != null &&
-                    mediaLoans[i].getMedia() instanceof CD cd &&
-                    cd.getTitle().equalsIgnoreCase(title) &&
-                    !mediaLoans[i].isReturned()) {
-                ml = mediaLoans[i];
+            if (mediaLoans[i] != null && mediaLoans[i].getMedia() instanceof CD cd &&
+                cd.getTitle().equalsIgnoreCase(title) && !mediaLoans[i].isReturned()) {
+                ml = mediaLoans[i]; 
                 break;
             }
         }
-        if (ml == null) {
-            System.out.println("✖ No active CD loan found");
-            return;
+        if (ml == null) { 
+            System.out.println("✖ No active CD loan found"); 
+            return; 
         }
         ml.markReturned();
         System.out.println("✔ CD returned successfully! 🎵");
     }
+    
 
-    // ===================== EMAIL REMINDERS =====================
-
-    /**
-     * Checks a member’s loans and sends an email reminder
-     * if they have overdue books.
-     *
-     * @param m the member to check
-     */
     private static void checkAndSendOverdueReminder(Member m) {
         if (emailService == null) {
-            return; // Skip silently if no email configured
+            return; // Skip silently if email service not available
         }
-
+        
         int overdueCount = 0;
         StringBuilder overdueBooks = new StringBuilder();
-
+        
+        // Check each loan for this member
         for (int j = 0; j < loanCount; j++) {
             loan ln = loans[j];
             if (ln != null && ln.getUser().equals(m) && !ln.isReturned() && ln.isOverdue()) {
@@ -738,19 +574,20 @@ public class Main {
                 int days = (int) ln.getOverdueDays(LocalDate.now());
                 int fine = days * 10;
                 overdueBooks.append("\n  - ").append(ln.getBook().getTitle())
-                        .append(" (").append(days).append(" days overdue, Fine: ")
-                        .append(fine).append(" NIS)");
+                           .append(" (").append(days).append(" days overdue, Fine: ")
+                           .append(fine).append(" NIS)");
             }
         }
-
+        
+        // If member has overdue books, send email automatically
         if (overdueCount > 0) {
             String subject = "⚠ Library Overdue Books Alert";
             String message = "Dear " + m.getUsername() + ",\n\n" +
-                    "You have " + overdueCount + " overdue book(s):" +
-                    overdueBooks.toString() + "\n\n" +
-                    "Please return them as soon as possible to avoid additional fines.\n\n" +
-                    "Thank you,\nLibrary Management System";
-
+                            "You have " + overdueCount + " overdue book(s):" +
+                            overdueBooks.toString() + "\n\n" +
+                            "Please return them as soon as possible to avoid additional fines.\n\n" +
+                            "Thank you,\nLibrary Management System";
+            
             try {
                 emailService.sendEmail(m.getEmail(), subject, message);
                 System.out.println("📧 Automatic reminder sent to: " + m.getEmail());
@@ -759,30 +596,25 @@ public class Main {
             }
         }
     }
-
-    /**
-     * Sends an email notification for a book returned late.
-     *
-     * @param m the member returning the late book
-     * @param ln the overdue loan
-     */
+    
+   
     private static void sendOverdueEmailForLoan(Member m, loan ln) {
         if (emailService == null) {
             return;
         }
-
+        
         int days = (int) ln.getOverdueDays(LocalDate.now());
         int fine = days * 10;
-
+        
         String subject = "⚠ Late Return - Fine Applied";
         String message = "Dear " + m.getUsername() + ",\n\n" +
-                "You have returned the book '" + ln.getBook().getTitle() +
-                "' late.\n\n" +
-                "Overdue: " + days + " days\n" +
-                "Fine: " + fine + " NIS\n\n" +
-                "Please pay your fine at the library.\n\n" +
-                "Thank you,\nLibrary Management System";
-
+                        "You have returned the book '" + ln.getBook().getTitle() + 
+                        "' late.\n\n" +
+                        "Overdue: " + days + " days\n" +
+                        "Fine: " + fine + " NIS\n\n" +
+                        "Please pay your fine at the library.\n\n" +
+                        "Thank you,\nLibrary Management System";
+        
         try {
             emailService.sendEmail(m.getEmail(), subject, message);
             System.out.println("📧 Late return notification sent to: " + m.getEmail());
@@ -790,30 +622,28 @@ public class Main {
             System.out.println("⚠ Email send failed: " + e.getMessage());
         }
     }
-
-    /**
-     * Sends overdue reminder emails to all members with overdue books.
-     * Must be called manually by an admin.
-     */
+    
+  
     private static void sendOverdueReminders() {
         if (currentAdmin == null) {
             System.out.println("✖ Admin must login first!");
             return;
         }
-
+        
         if (emailService == null) {
             System.out.println("✖ Email service not initialized!");
             return;
         }
-
+        
         System.out.println("\n📧 Checking for overdue books...");
         int remindersSent = 0;
-
+        
         for (int i = 0; i < memberCount; i++) {
             Member m = members[i];
             int overdueCount = 0;
             StringBuilder overdueBooks = new StringBuilder();
-
+            
+            // Check each loan for this member
             for (int j = 0; j < loanCount; j++) {
                 loan ln = loans[j];
                 if (ln != null && ln.getUser().equals(m) && !ln.isReturned() && ln.isOverdue()) {
@@ -821,40 +651,35 @@ public class Main {
                     int days = (int) ln.getOverdueDays(LocalDate.now());
                     int fine = days * 10;
                     overdueBooks.append("\n  - ").append(ln.getBook().getTitle())
-                            .append(" (").append(days).append(" days overdue, Fine: ")
-                            .append(fine).append(" NIS)");
+                               .append(" (").append(days).append(" days overdue, Fine: ")
+                               .append(fine).append(" NIS)");
                 }
             }
-
+            
+            // If member has overdue books, send email directly
             if (overdueCount > 0) {
                 String subject = "Library Overdue Books Reminder";
                 String message = "Dear " + m.getUsername() + ",\n\n" +
-                        "You have " + overdueCount + " overdue book(s):" +
-                        overdueBooks.toString() + "\n\n" +
-                        "Please return them as soon as possible to avoid additional fines.\n\n" +
-                        "Thank you,\nLibrary Management System";
-
+                                "You have " + overdueCount + " overdue book(s):" +
+                                overdueBooks.toString() + "\n\n" +
+                                "Please return them as soon as possible to avoid additional fines.\n\n" +
+                                "Thank you,\nLibrary Management System";
+                
                 try {
+                    // Send email directly using EmailService
                     emailService.sendEmail(m.getEmail(), subject, message);
-                    System.out.println("✔ Email sent to: " + m.getUsername() +
-                            " (" + m.getEmail() + ") - " + overdueCount + " overdue book(s)");
+                    System.out.println("✔ Email sent to: " + m.getUsername() + " (" + m.getEmail() + ") - " + overdueCount + " overdue book(s)");
                     remindersSent++;
                 } catch (Exception e) {
                     System.out.println("✖ Failed to send email to " + m.getUsername() + ": " + e.getMessage());
                 }
             }
         }
-
+        
         if (remindersSent == 0) {
             System.out.println("✔ No overdue books found. No reminders sent.");
         } else {
             System.out.println("\n✔ Total reminders sent: " + remindersSent);
         }
     }
-    
-}
-
-
-
-
-
+}*/
