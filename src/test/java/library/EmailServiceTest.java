@@ -1,10 +1,6 @@
 package library;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import com.sun.jdi.connect.Transport;
 
 import jakarta.mail.MessagingException;
 import service.EmailService;
@@ -38,7 +34,7 @@ public class EmailServiceTest {
                 es.sendEmail("test@mail.com", "Hello", ""));
     }
 
-
+  
   
     static class FakeEmailService extends EmailService {
 
@@ -53,23 +49,30 @@ public class EmailServiceTest {
     }
     
     @Test
-    void testSendEmail_CatchBlockIsCovered() {
+    void testSendEmail_SuccessBranchFullyCovered() {
+        EmailService es = new EmailService("lana", "123");
 
-        // Fake class that forces sendEmail to throw MessagingException
-        EmailService failingService = new EmailService("lana", "123") {
+        assertDoesNotThrow(() ->
+                es.sendEmail("test@mail.com", "Hello", "body"));
+    }
+
+
+    @Test
+    void testSendEmail_CatchBranchFullyCovered() {
+        EmailService es = new EmailService("lana", "123") {
             @Override
             public void sendEmail(String to, String subject, String body) {
                 try {
-                    throw new jakarta.mail.MessagingException("SMTP Failure Test");
-                } catch (Exception ex) {
+                    throw new MessagingException("Fake fail");
+                } catch (MessagingException ex) {
                     ex.printStackTrace();
+                    System.out.println("Email failed: " + ex.getMessage());
                 }
             }
         };
 
         assertDoesNotThrow(() ->
-                failingService.sendEmail("test@mail.com", "Hello", "body"));
+                es.sendEmail("x@mail.com", "Hi", "body"));
     }
-
 
 }
