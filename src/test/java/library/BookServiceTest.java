@@ -234,6 +234,50 @@ public class BookServiceTest {
         assertEquals("Networks by Kurose (ISBN: B200)", text);
     }
     
-    
+    @Test
+    void testAddBookNullDoesNothing() {
+        bookService.addBook(null);
+        assertEquals(0, bookService.getAllBooks().size());
+    }
+    @Test
+    void testBorrowBookUserHasBothOverdueAndFine() {
+        Book b = new Book("Java","Oracle","111");
+        bookService.addBook(b);
+
+        Member m = new Member("1","lana","pass","Lana","mail");
+
+        // add overdue loan
+        loan ln = new loan(b,m);
+        m.addLoan(ln);
+
+        try {
+            Field f = loan.class.getDeclaredField("dueDate");
+            f.setAccessible(true);
+            f.set(ln, LocalDate.now().minusDays(5));
+        } catch(Exception ignored){}
+
+        // add fine
+        m.addFine(new BigDecimal("10"));
+
+        assertThrows(Exception.class, () -> bookService.borrowBook(b, m));
+    }
+    @Test
+    void testReturnBookNoOverdueNoFine() throws Exception {
+        Book b = new Book("Java","Oracle","111");
+        bookService.addBook(b);
+
+        Member m = new Member("1","lana","pass","Lana","mail");
+        loan ln = bookService.borrowBook(b,m);
+
+        // Force due date = today → not overdue
+        Field f = loan.class.getDeclaredField("dueDate");
+        f.setAccessible(true);
+        f.set(ln, LocalDate.now());
+
+        bookService.returnBook(ln);
+
+        assertEquals(BigDecimal.ZERO, m.getFineBalance());
+    }
+ 
     
 }

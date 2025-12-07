@@ -328,5 +328,50 @@ public class AdmiTest {
                 "The internal users list must NOT be modified when modifying returned list");
     }
 
+    @Test
+    void testAddUserNullDoesNothing() {
+        admin.addUser(null);
+        assertEquals(0, admin.getUsers().size());
+    }
+    @Test
+    void testFindUserNull() {
+        admin.addUser(new Member("1","lana","pass","Lana","mail"));
+        assertNull(admin.findUser(null));
+    }
+    @Test
+    void testUnregisterUserNull() {
+        admin.login("admin","1234");
+        assertThrows(IllegalStateException.class, () -> admin.unregisterUser(null));
+    }
+    @Test
+    void testSendRemindersSkipsAdmins() {
+        Admin a = new Admin("A1","admin2","p","Admin Two");
+        admin.addUser(a);
+
+        Observer obs = Mockito.mock(Observer.class);
+        admin.addObserver(obs);
+
+        admin.sendReminders();
+
+        Mockito.verify(obs, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
+    }
+    @Test
+    void testSendRemindersReturnedLoanNoNotify() {
+        Member m = new Member("1","lana","pass","Lana","mail");
+        admin.addUser(m);
+
+        Book b = new Book("Java","Oracle","111");
+        loan ln = new loan(b,m);
+        ln.setReturned(true);
+        m.addLoan(ln);
+
+        Observer obs = Mockito.mock(Observer.class);
+        admin.addObserver(obs);
+
+        admin.sendReminders();
+
+        Mockito.verify(obs, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
+    }
+
 
 }
