@@ -10,21 +10,47 @@ import org.junit.jupiter.api.Test;
 
 import service.OverdueReportService;
 
+/**
+ * Unit tests for the {@link OverdueReportService} class.
+ *
+ * <p>This test suite verifies all fine-calculation logic for both
+ * individual users and lists of mixed media loans (Books + CDs)
+ * according to Sprint 5 requirements.</p>
+ *
+ * <h2>Covered Scenarios:</h2>
+ * <ul>
+ *     <li>Mixed media fine computation (Book + CD)</li>
+ *     <li>No-overdue cases</li>
+ *     <li>Null input handling</li>
+ *     <li>User-only fine calculations</li>
+ *     <li>Returned loans exclusion</li>
+ *     <li>Mixed user loans (Books + CDs)</li>
+ *     <li>Validation of ELSE branch (BookFineStrategy fallback)</li>
+ * </ul>
+ *
+ * @version 1.0
+ * @since 2025-12-07
+ */
 public class OverdueReportServiceTest {
 
     // ===================================================================
-    // 1) Mixed Media Test (Book + CD)  — يغطي calculateTotalFine()
+    // 1) Mixed Media Test (Book + CD) — calculateTotalFine()
     // ===================================================================
+
+    /**
+     * Ensures total fine is correctly computed for a mixed set of overdue
+     * Book and CD loans. Books use 10 NIS/day, CDs use 20 NIS/day.
+     */
     @Test
     void testMixedMediaFineCalculation() {
 
         LocalDate today = LocalDate.now();
 
-        // Book → due after 28 days → now 35 days → 7 overdue
+        // Book: overdue 7 days
         Book book = new Book("Java Programming", "Author A", "B001");
         MediaLoan bookLoan = new MediaLoan(book, today.minusDays(35));
 
-        // CD → due after 7 days → now 35 days → 28 overdue
+        // CD: overdue 28 days
         CD cd = new CD("Top 40 Hits", "DJ Mix");
         MediaLoan cdLoan = new MediaLoan(cd, today.minusDays(35));
 
@@ -35,21 +61,23 @@ public class OverdueReportServiceTest {
         OverdueReportService service = new OverdueReportService();
         int totalFine = service.calculateTotalFine(loans, today);
 
-        // book = 7 × 10 = 70
-        // cd   = 28 × 20 = 560
         assertEquals(630, totalFine);
     }
 
     // ===================================================================
     // 2) Test calculateTotalFine with no overdue
     // ===================================================================
+
+    /**
+     * Verifies that no fine is charged if items are not overdue.
+     */
     @Test
     void testTotalFineNoOverdue() {
 
         LocalDate today = LocalDate.now();
 
         Book book = new Book("Clean Code", "Bob", "B002");
-        MediaLoan loan = new MediaLoan(book, today.minusDays(10)); // not overdue (10 < 28)
+        MediaLoan loan = new MediaLoan(book, today.minusDays(10)); // not overdue
 
         List<MediaLoan> loans = new ArrayList<>();
         loans.add(loan);
@@ -59,8 +87,12 @@ public class OverdueReportServiceTest {
     }
 
     // ===================================================================
-    // 3) Test calculateTotalFine with null cases
+    // 3) Null input handling
     // ===================================================================
+
+    /**
+     * Ensures null lists or null dates produce a safe return of zero fine.
+     */
     @Test
     void testCalculateTotalFineNullInputs() {
         OverdueReportService service = new OverdueReportService();
@@ -69,8 +101,12 @@ public class OverdueReportServiceTest {
     }
 
     // ===================================================================
-    // 4) Test calculateForUser() – Only Books
+    // 4) calculateForUser() – Only Books
     // ===================================================================
+
+    /**
+     * Tests fines calculation for a user with only book loans.
+     */
     @Test
     void testCalculateForUserBooksOnly() throws Exception {
 
@@ -80,7 +116,7 @@ public class OverdueReportServiceTest {
         Book b = new Book("Mips", "Hennessy", "B100");
         loan ln = new loan(b, m);
 
-        // Force overdue → 5 days overdue
+        // Make overdue 5 days
         var f = loan.class.getDeclaredField("dueDate");
         f.setAccessible(true);
         f.set(ln, today.minusDays(5));
@@ -88,14 +124,16 @@ public class OverdueReportServiceTest {
         m.addLoan(ln);
 
         OverdueReportService s = new OverdueReportService();
-
-        // book = 5 × 10 = 50
         assertEquals(50, s.calculateForUser(m, today));
     }
 
     // ===================================================================
-    // 5) Test calculateForUser() – Returned loans ignored
+    // 5) Returned loans should be ignored
     // ===================================================================
+
+    /**
+     * Verifies returned loans are excluded from fine computation.
+     */
     @Test
     void testCalculateForUserReturnedLoanIgnored() throws Exception {
 
@@ -105,22 +143,25 @@ public class OverdueReportServiceTest {
         Book b = new Book("Networks", "Kurose", "B200");
         loan ln = new loan(b, m);
 
-        // overdue
         var f = loan.class.getDeclaredField("dueDate");
         f.setAccessible(true);
         f.set(ln, today.minusDays(4));
 
-        ln.isReturned2();    // returned → should not count
+        ln.isReturned2(); // should be ignored
         m.addLoan(ln);
 
         OverdueReportService s = new OverdueReportService();
-
         assertEquals(0, s.calculateForUser(m, today));
     }
 
     // ===================================================================
-    // 6) Test calculateForUser() – Mixed: Books + CDs
+    // 6) Mixed: Books + CDs
     // ===================================================================
+
+    /**
+     * Ensures calculateForUser() handles mixed media properly.
+     * Book → 10 NIS/day, CD → 20 NIS/day.
+     */
     @Test
     void testCalculateForUserMixedBooksAndCDs() throws Exception {
 
@@ -128,7 +169,7 @@ public class OverdueReportServiceTest {
 
         Member m = new Member("2", "sara", "123", "Sara", "sara@mail.com");
 
-        // ===== Book overdue 3 days =====
+        // Book overdue 3 days
         Book book = new Book("AI", "Author X", "B300");
         loan ln = new loan(book, m);
 
@@ -138,29 +179,32 @@ public class OverdueReportServiceTest {
 
         m.addLoan(ln);
 
-        // ===== CD overdue 10 days =====
+        // CD overdue 13 days
         CD cd = new CD("Pop Mix", "DJ");
-        MediaLoan cdLoan = new MediaLoan(cd, today.minusDays(20)); // due after 7 days → overdue 13
+        MediaLoan cdLoan = new MediaLoan(cd, today.minusDays(20));
 
-        // add MediaLoan to member
         m.addMediaLoan(cdLoan);
 
         OverdueReportService s = new OverdueReportService();
 
-        // book = 3 × 10 = 30
-        // cd   = 13 × 20 = 260
-        int expected = 30 + 260;
-
+        int expected = (3 * 10) + (13 * 20);
         assertEquals(expected, s.calculateForUser(m, today));
     }
 
     // ===================================================================
-    // 7) Test calculateForUser null cases
+    // 7) Null inputs for calculateForUser()
     // ===================================================================
+
+    /**
+     * Ensures safe zero return when Member or date is null.
+     */
     @Test
     void testCalculateForUserNullCases() {
         OverdueReportService s = new OverdueReportService();
         assertEquals(0, s.calculateForUser(null, LocalDate.now()));
         assertEquals(0, s.calculateForUser(new Member("1","a","b","c","x"), null));
     }
+
+   
+ 
 }

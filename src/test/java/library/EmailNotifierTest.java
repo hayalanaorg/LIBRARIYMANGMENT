@@ -2,22 +2,52 @@ package library;
 
 import org.junit.jupiter.api.Test;
 import service.EmailService;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class EmailNotifierTest {
+/**
+ * Unit tests for the {@link EmailNotifier} class.
+ *
+ * <p>This test verifies the Observer implementation responsible for sending
+ * email reminders through {@link EmailService}.</p>
+ *
+ * <h2>Key behaviors tested:</h2>
+ * <ul>
+ *     <li>Ensuring {@code notify()} correctly delegates email sending to EmailService</li>
+ *     <li>Validating correct email address retrieval from {@link Member}</li>
+ *     <li>Ensuring fixed subject "Book Reminder" is applied</li>
+ *     <li>Confirming email body matches the notification message</li>
+ * </ul>
+ *
+ * <p>A {@code FakeEmailService} subclass is used instead of the real
+ * SMTP-based service to safely capture method calls during testing.</p>
+ *
+ * @version 1.0
+ * @author
+ *     Lana Omar (Documentation)
+ * @since 2025-12-07
+ */
+public class EmailNotifierTest {
 
-    // Fake EmailService: ما ببعث إيميل، بس بحفظ آخر قيم استلمها
+    /**
+     * A fake EmailService implementation used only for testing.
+     * It stores the last sent email details instead of performing SMTP calls.
+     */
     static class FakeEmailService extends EmailService {
 
         String lastTo;
         String lastSubject;
         String lastBody;
 
+        /**
+         * Creates a fake service without real credentials.
+         */
         public FakeEmailService() {
             super("fakeUser", "fakePass");
         }
 
+        /**
+         * Captures email arguments instead of sending an actual email.
+         */
         @Override
         public void sendEmail(String to, String subject, String body) {
             lastTo = to;
@@ -26,24 +56,23 @@ class EmailNotifierTest {
         }
     }
 
+    /**
+     * Tests that {@link EmailNotifier#notify(Member, String)} correctly calls
+     * the underlying EmailService with the right email, subject, and body.
+     */
     @Test
     void testNotifierCallsEmailService() {
 
-        // نستخدم النسخة الوهمية بدل الحقيقي
         FakeEmailService fake = new FakeEmailService();
 
-        // نمررها للـ notifier
         EmailNotifier notifier = new EmailNotifier(fake);
 
-        // عضو وهمي
         Member m = new Member("1", "lana", "pass", "Lana", "lana@mail.com");
 
-        // استدعاء notify
         notifier.notify(m, "Hello Lana");
 
-        // التحقق
-        assertEquals("lana@mail.com", fake.lastTo);         // ✔ من member
-        assertEquals("Book Reminder", fake.lastSubject);    // ✔ ثابت حسب notifier
-        assertEquals("Hello Lana", fake.lastBody);          // ✔ نفس message
+        assertEquals("lana@mail.com", fake.lastTo);
+        assertEquals("Book Reminder", fake.lastSubject);
+        assertEquals("Hello Lana", fake.lastBody);
     }
 }
