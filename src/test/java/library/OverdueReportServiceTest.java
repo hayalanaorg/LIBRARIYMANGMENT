@@ -168,6 +168,26 @@ public class OverdueReportServiceTest {
         assertEquals(0, s.calculateForUser(new Member("1","a","b","c","x"), null));
     }
 
-   
+    @Test
+    void testFineCalculationForNonCDMediaUsesBookStrategy() {
+
+        OverdueReportService service = new OverdueReportService();
+
+        Member m = new Member("1", "lana", "pass", "Lana", "lana@mail.com");
+
+        // Use a fixed date to avoid timing differences
+        LocalDate today = LocalDate.of(2025, 1, 1);
+        LocalDate borrowDate = today.minusDays(40);
+
+        Book book = new Book("Java", "Oracle", "111");
+        MediaLoan ml = new MediaLoan(book, borrowDate);
+        m.addMediaLoan(ml);
+
+        int result = service.calculateForUser(m, today);
+
+        assertEquals(120, result, "Non-CD media should use BookFineStrategy");
+    }
+
+
  
 }

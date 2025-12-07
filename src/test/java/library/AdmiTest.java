@@ -308,4 +308,25 @@ public class AdmiTest {
 
         assertEquals("MANAGER", a.getRole());
     }
+    @Test
+    void testGetUsersReturnsCopyNotOriginal() {
+        Member m1 = new Member("1", "lana", "pass", "Lana", "lana@mail.com");
+        Member m2 = new Member("2", "sara", "pass", "Sara", "sara@mail.com");
+
+        admin.addUser(m1);
+        admin.addUser(m2);
+
+        var returnedList = admin.getUsers();
+
+        assertEquals(2, returnedList.size());
+        assertTrue(returnedList.contains(m1));
+        assertTrue(returnedList.contains(m2));
+
+        returnedList.clear();
+
+        assertEquals(2, admin.getUsers().size(),
+                "The internal users list must NOT be modified when modifying returned list");
+    }
+
+
 }

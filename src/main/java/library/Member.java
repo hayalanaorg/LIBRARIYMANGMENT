@@ -38,7 +38,7 @@ public class Member extends user {
     private List<loan> loans = new ArrayList<>();
 
     /** Array of polymorphic media loans (Books or CDs). */
-    private MediaLoan[] mediaLoans = new MediaLoan[100];
+    private List<MediaLoan> mediaLoans = new ArrayList<>();
 
     /** Number of media loans in the array. */
     private int mediaLoanCount = 0;
@@ -157,7 +157,7 @@ public class Member extends user {
      * @param loan media loan object
      */
     public void addMediaLoan(MediaLoan loan) {
-        mediaLoans[mediaLoanCount++] = loan;
+        if (loan != null) mediaLoans.add(loan);
         loan.setUser(this);
     }
 
@@ -166,11 +166,7 @@ public class Member extends user {
      *
      * @return array of {@link MediaLoan} objects
      */
-    public MediaLoan[] getMediaLoans() {
-        MediaLoan[] copy = new MediaLoan[mediaLoanCount];
-        for (int i = 0; i < mediaLoanCount; i++) {
-            copy[i] = mediaLoans[i];
-        }
-        return copy;
+    public List<MediaLoan> getMediaLoans() {
+        return new ArrayList<>(mediaLoans);
     }
 }

@@ -176,9 +176,9 @@ public class MemberTest {
 
         member.addMediaLoan(ml);
 
-        MediaLoan[] arr = member.getMediaLoans();
-        assertEquals(1, arr.length);
-        assertEquals(ml, arr[0]);
+        List<MediaLoan> arr = member.getMediaLoans();
+        assertEquals(1, arr.size());
+        assertEquals(ml, arr.get(0));
         assertEquals(member, ml.getUser());
     }
 
@@ -194,11 +194,11 @@ public class MemberTest {
         member.addMediaLoan(ml1);
         member.addMediaLoan(ml2);
 
-        MediaLoan[] list = member.getMediaLoans();
+        List<MediaLoan> list = member.getMediaLoans();
 
-        assertEquals(2, list.length);
-        assertEquals(ml1, list[0]);
-        assertEquals(ml2, list[1]);
+        assertEquals(2, list.size());
+        assertEquals(ml1, list.get(0));
+        assertEquals(ml2, list.get(1));
     }
 
     // ============================================================
@@ -227,7 +227,7 @@ public class MemberTest {
 
     @Test
     void testEmptyMediaLoans() {
-        assertEquals(0, member.getMediaLoans().length);
+        assertEquals(0, member.getMediaLoans().size());
     }
 
    
