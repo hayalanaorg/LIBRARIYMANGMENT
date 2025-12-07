@@ -9,37 +9,12 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Unit tests for the {@link Member} class.
- *
- * <p>This test suite validates all core behaviors of the Member entity,
- * including user data initialization, loan management, fine handling,
- * borrowing eligibility logic, media loan operations (Sprint 5),
- * and string representation formatting.</p>
- *
- * <h2>Behavior categories covered:</h2>
- * <ul>
-<li>Constructor correctness &amp; getter validation</li>
- *     <li>Loan list manipulation and safety</li>
- *     <li>Fine management (addition, payment, edge cases)</li>
- *     <li>Borrowing eligibility rules</li>
- *     <li>Media loans handling (CD/Book loans)</li>
- *     <li>toString() formatting behavior</li>
-<li>Edge-case conditions for lists &amp; references</li>
- * </ul>
- *
- * @version 1.0
- * @author
- *     Lana Omar (Documentation)
- * @since 2025-12-07
- */
+
 public class MemberTest {
 
     private Member member;
 
-    /**
-     * Creates a fresh Member instance for each test.
-     */
+
     @BeforeEach
     void setup() {
         member = new Member("1", "lana", "pass", "Lana Omar", "lana@mail.com");
@@ -49,10 +24,7 @@ public class MemberTest {
     // CONSTRUCTOR + GETTERS
     // ============================================================
 
-    /**
-     * Ensures constructor correctly initializes all fields
-     * and computed properties (admin flag, active status, fine balance).
-     */
+
     @Test
     void testConstructor() {
         assertEquals("1", member.getId());
@@ -69,9 +41,6 @@ public class MemberTest {
     // LOANS LIST
     // ============================================================
 
-    /**
-     * Tests successful loan addition.
-     */
     @Test
     void testAddLoan() {
         Book b = new Book("Java", "Oracle", "111");
@@ -83,9 +52,7 @@ public class MemberTest {
         assertTrue(member.getLoans().contains(ln));
     }
 
-    /**
-     * Verifies that adding null loans is safely ignored.
-     */
+    
     @Test
     void testAddLoanNullIgnored() {
         member.addLoan(null);
@@ -96,36 +63,28 @@ public class MemberTest {
     // FINES
     // ============================================================
 
-    /**
-     * Tests adding a valid fine amount.
-     */
+
     @Test
     void testAddFine() {
         member.addFine(new BigDecimal("10"));
         assertEquals(new BigDecimal("10"), member.getFineBalance());
     }
 
-    /**
-     * Zero-value fines should not change balance.
-     */
+
     @Test
     void testAddFineZeroIgnored() {
         member.addFine(BigDecimal.ZERO);
         assertEquals(BigDecimal.ZERO, member.getFineBalance());
     }
 
-    /**
-     * Null fine inputs should be ignored.
-     */
+  
     @Test
     void testAddFineNullIgnored() {
         member.addFine(null);
         assertEquals(BigDecimal.ZERO, member.getFineBalance());
     }
 
-    /**
-     * Partial fine payment reduces balance.
-     */
+    
     @Test
     void testPayFinePartial() {
         member.addFine(new BigDecimal("20"));
@@ -133,9 +92,7 @@ public class MemberTest {
         assertEquals(new BigDecimal("15"), member.getFineBalance());
     }
 
-    /**
-     * Full fine payment reduces balance to zero.
-     */
+
     @Test
     void testPayFineFull() {
         member.addFine(new BigDecimal("20"));
@@ -143,9 +100,8 @@ public class MemberTest {
         assertEquals(BigDecimal.ZERO, member.getFineBalance());
     }
 
-    /**
-     * Overpayment should not produce negative balance.
-     */
+
+
     @Test
     void testPayFineOverpayment() {
         member.addFine(new BigDecimal("20"));
@@ -153,9 +109,7 @@ public class MemberTest {
         assertEquals(BigDecimal.ZERO, member.getFineBalance());
     }
 
-    /**
-     * Zero or negative fine payments should be ignored.
-     */
+  
     @Test
     void testPayFineZeroOrNegativeIgnored() {
         member.addFine(new BigDecimal("20"));
@@ -170,26 +124,20 @@ public class MemberTest {
     // BORROW LOGIC
     // ============================================================
 
-    /**
-     * Eligible users: no fines + no overdue loans.
-     */
+   
     @Test
     void testCanBorrowNoFinesNoOverdues() {
         assertTrue(member.canBorrow());
     }
 
-    /**
-     * Users with unpaid fines cannot borrow.
-     */
+ 
     @Test
     void testCannotBorrowWithUnpaidFines() {
         member.addFine(new BigDecimal("10"));
         assertFalse(member.canBorrow());
     }
 
-    /**
-     * Users with overdue loans cannot borrow.
-     */
+    
     @Test
     void testCannotBorrowWithOverdueLoan() throws Exception {
         Book b = new Book("Networks", "Kurose", "B200");
@@ -204,9 +152,7 @@ public class MemberTest {
         assertFalse(member.canBorrow());
     }
 
-    /**
-     * Returned overdue loans should not block borrowing.
-     */
+
     @Test
     void testCanBorrowReturnedLoan() {
         Book b = new Book("Networks", "Kurose", "B200");
@@ -222,9 +168,7 @@ public class MemberTest {
     // MEDIA LOANS (Sprint 5)
     // ============================================================
 
-    /**
-     * Tests adding a single media loan & verifying ownership binding.
-     */
+    
     @Test
     void testAddMediaLoan() {
         CD cd = new CD("Hits", "Taylor");
@@ -238,9 +182,7 @@ public class MemberTest {
         assertEquals(member, ml.getUser());
     }
 
-    /**
-     * Tests adding multiple media loans.
-     */
+
     @Test
     void testMultipleMediaLoans() {
         CD c1 = new CD("C1", "A");
@@ -263,9 +205,7 @@ public class MemberTest {
     // TO STRING
     // ============================================================
 
-    /**
-     * Ensures correct formatting of Member textual representation.
-     */
+  
     @Test
     void testToStringFormat() {
         member.addFine(new BigDecimal("15"));
@@ -284,17 +224,13 @@ public class MemberTest {
     // EDGE CASES
     // ============================================================
 
-    /**
-     * getMediaLoans() when no media loans → empty list.
-     */
+
     @Test
     void testEmptyMediaLoans() {
         assertEquals(0, member.getMediaLoans().length);
     }
 
-    /**
-     * Tests that loan list is independent (no external modification allowed).
-     */
+   
     @Test
     void testLoansListReferenceIndependence() {
         List<loan> original = member.getLoans();

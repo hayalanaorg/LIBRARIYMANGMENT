@@ -10,37 +10,13 @@ import org.junit.jupiter.api.Test;
 
 import service.OverdueReportService;
 
-/**
- * Unit tests for the {@link OverdueReportService} class.
- *
- * <p>This test suite verifies all fine-calculation logic for both
- * individual users and lists of mixed media loans (Books + CDs)
- * according to Sprint 5 requirements.</p>
- *
- * <h2>Covered Scenarios:</h2>
- * <ul>
- *     <li>Mixed media fine computation (Book + CD)</li>
- *     <li>No-overdue cases</li>
- *     <li>Null input handling</li>
- *     <li>User-only fine calculations</li>
- *     <li>Returned loans exclusion</li>
- *     <li>Mixed user loans (Books + CDs)</li>
- *     <li>Validation of ELSE branch (BookFineStrategy fallback)</li>
- * </ul>
- *
- * @version 1.0
- * @since 2025-12-07
- */
 public class OverdueReportServiceTest {
 
     // ===================================================================
     // 1) Mixed Media Test (Book + CD) — calculateTotalFine()
     // ===================================================================
 
-    /**
-     * Ensures total fine is correctly computed for a mixed set of overdue
-     * Book and CD loans. Books use 10 NIS/day, CDs use 20 NIS/day.
-     */
+
     @Test
     void testMixedMediaFineCalculation() {
 
@@ -68,9 +44,7 @@ public class OverdueReportServiceTest {
     // 2) Test calculateTotalFine with no overdue
     // ===================================================================
 
-    /**
-     * Verifies that no fine is charged if items are not overdue.
-     */
+
     @Test
     void testTotalFineNoOverdue() {
 
@@ -90,9 +64,7 @@ public class OverdueReportServiceTest {
     // 3) Null input handling
     // ===================================================================
 
-    /**
-     * Ensures null lists or null dates produce a safe return of zero fine.
-     */
+
     @Test
     void testCalculateTotalFineNullInputs() {
         OverdueReportService service = new OverdueReportService();
@@ -104,9 +76,7 @@ public class OverdueReportServiceTest {
     // 4) calculateForUser() – Only Books
     // ===================================================================
 
-    /**
-     * Tests fines calculation for a user with only book loans.
-     */
+
     @Test
     void testCalculateForUserBooksOnly() throws Exception {
 
@@ -131,9 +101,7 @@ public class OverdueReportServiceTest {
     // 5) Returned loans should be ignored
     // ===================================================================
 
-    /**
-     * Verifies returned loans are excluded from fine computation.
-     */
+
     @Test
     void testCalculateForUserReturnedLoanIgnored() throws Exception {
 
@@ -158,10 +126,7 @@ public class OverdueReportServiceTest {
     // 6) Mixed: Books + CDs
     // ===================================================================
 
-    /**
-     * Ensures calculateForUser() handles mixed media properly.
-     * Book → 10 NIS/day, CD → 20 NIS/day.
-     */
+
     @Test
     void testCalculateForUserMixedBooksAndCDs() throws Exception {
 
@@ -195,9 +160,7 @@ public class OverdueReportServiceTest {
     // 7) Null inputs for calculateForUser()
     // ===================================================================
 
-    /**
-     * Ensures safe zero return when Member or date is null.
-     */
+   
     @Test
     void testCalculateForUserNullCases() {
         OverdueReportService s = new OverdueReportService();

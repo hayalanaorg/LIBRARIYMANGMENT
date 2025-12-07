@@ -7,8 +7,9 @@ package library;
  * an additional property to identify the admin's role (e.g., "ADMIN", "SUPER_ADMIN").
  * </p>
  *
- * @author Lana Omar
- * @version 1.0
+ * @author Haya Wadah Abdat 
+ *      (Documented &amp; revised by Lana Omar)
+ * @version 1.1
  */
 public class Admin extends user {
 
