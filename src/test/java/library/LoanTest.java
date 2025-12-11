@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class LoanTest {
+public class LoanTest { 
 
     private Member member;
     private Book book;
