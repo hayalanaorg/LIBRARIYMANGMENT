@@ -55,7 +55,7 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * Creates a new instance of the admin service using
-     * an in-memory data store.
+     * an in-memory data store. 
      */
     public AdminServiceImpl() {
         // Empty constructor - uses default initialization.
