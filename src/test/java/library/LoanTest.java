@@ -183,7 +183,7 @@ public class LoanTest {
         LocalDate past = LocalDate.now().minusDays(10);
         ln.setDueDate(past);
         assertEquals(past, ln.getDueDate());
-    }
+    } 
 
 
     @Test
