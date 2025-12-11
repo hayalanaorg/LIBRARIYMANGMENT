@@ -185,7 +185,7 @@ public class LoanTest {
         assertEquals(past, ln.getDueDate());
     } 
 
-
+ 
     @Test
     void testSetDueDateDoesNotBreak() {
         assertDoesNotThrow(() -> ln.setDueDate(LocalDate.now()));
