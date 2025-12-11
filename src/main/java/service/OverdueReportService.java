@@ -135,7 +135,7 @@ public class OverdueReportService {
                 if (ml.getMedia() instanceof CD) {
                     strategy = new CDFineStrategy();
                 } else {
-                    // fallback = book
+                     // fallback = book
                     strategy = new BookFineStrategy();
                 }
 
