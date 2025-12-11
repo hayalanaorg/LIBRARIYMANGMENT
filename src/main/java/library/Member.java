@@ -40,8 +40,6 @@ public class Member extends user {
     /** Array of polymorphic media loans (Books or CDs). */
     private List<MediaLoan> mediaLoans = new ArrayList<>();
 
-    /** Number of media loans in the array. */
-    private int mediaLoanCount = 0;
 
     /**
      * Creates a new member with the given details.
@@ -157,8 +155,10 @@ public class Member extends user {
      * @param loan media loan object
      */
     public void addMediaLoan(MediaLoan loan) {
-        if (loan != null) mediaLoans.add(loan);
-        loan.setUser(this);
+        if (loan != null) {
+        	mediaLoans.add(loan);
+            loan.setUser(this);
+        }
     }
 
     /**

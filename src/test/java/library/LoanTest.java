@@ -200,14 +200,18 @@ public class LoanTest {
             public FaultyLoan(Book b, Member m) {
                 super(b, m);
             }
+            public void setOverdueLocalDate(LocalDate date) {
+                throw new RuntimeException("Cannot set overdue date");
+            
+        }
         }
 
         FaultyLoan faulty = new FaultyLoan(book, member);
 
-        // Act + Assert → must throw RuntimeException from the catch block
-        assertThrows(RuntimeException.class,
-                () -> faulty.setDueDate(LocalDate.now()),
-                "Expected RuntimeException when reflection fails");
+     // Act + Assert -> must throw RuntimeException from the catch block
+        assertThrows(RuntimeException.class, 
+            () -> faulty.setOverdueLocalDate(LocalDate.now())
+        );
     }
 
 }

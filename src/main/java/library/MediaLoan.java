@@ -66,9 +66,7 @@ public class MediaLoan {
         }
     }
 
-    // ===================================
     // GETTERS / SETTERS
-    // ===================================
 
     /**
      * Returns the media item (Book or CD).
@@ -124,9 +122,7 @@ public class MediaLoan {
         return returned;
     }
 
-    // ===================================
     // RETURN FUNCTION
-    // ===================================
 
     /**
      * Marks the media item as returned and updates its availability:
@@ -147,9 +143,7 @@ public class MediaLoan {
         }
     }
 
-    // ===================================
     // OVERDUE CALCULATION
-    // ===================================
 
     /**
      * Determines whether the loan is overdue based on today's date.
