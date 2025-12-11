@@ -157,8 +157,10 @@ public class Member extends user {
      * @param loan media loan object
      */
     public void addMediaLoan(MediaLoan loan) {
-        if (loan != null) mediaLoans.add(loan);
-        loan.setUser(this);
+        if (loan != null) {
+        	mediaLoans.add(loan);
+        
+        loan.setUser(this);}
     }
 
     /**

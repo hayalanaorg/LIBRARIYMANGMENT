@@ -58,11 +58,11 @@ public class AdminServiceImpl implements AdminService {
      * an in-memory data store.
      */
     public AdminServiceImpl() {
+        // Empty constructor - uses default initialization.
+        // Books, users, and observers lists are already initialized inline.
     }
 
-    // ============================================================
     // USER MANAGEMENT
-    // ============================================================
 
     /**
      * Registers a new user in the system (used mainly for tests/setup).

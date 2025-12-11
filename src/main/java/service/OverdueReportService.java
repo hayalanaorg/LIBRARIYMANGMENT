@@ -101,48 +101,68 @@ public class OverdueReportService {
      * @param now the "current" date used to compare overdue days
      * @return total fine amount in NIS
      */
+    /**
+     * Calculates the total overdue fines for a member using streams.
+     *
+     * @param m   the member whose fines should be computed
+     * @param now the "current" date used to compare overdue days
+     * @return total fine amount in NIS
+     */
     public int calculateForUser(Member m, LocalDate now) {
-        if (m == null || now == null) return 0;
-
-        int total = 0;
-
-        // ============================
-        // 1) Book loans (loan)
-        // ============================
-        for (loan ln : m.getLoans()) {
-            if (ln == null || ln.isReturned()) continue;
-
-            long overdueDays = ln.getOverdueDays(now);
-            if (overdueDays > 0) {
-
-                BookFineStrategy strategy = new BookFineStrategy();
-                total += strategy.calculateFine((int) overdueDays);
-            }
+        if (m == null || now == null) {
+            return 0;
         }
+        
+        int bookFines = calculateBookFinesStream(m, now);
+        int mediaFines = calculateMediaFinesStream(m, now);
+        
+        return bookFines + mediaFines;
+    }
 
-        // ============================
-        // 2) MediaLoan loans (books + CDs)
-        // ============================
-        for (MediaLoan ml : m.getMediaLoans()) {
-            if (ml == null || ml.isReturned()) continue;
+    /**
+     * Calculates book loan fines using streams.
+     */
+    private int calculateBookFinesStream(Member m, LocalDate now) {
+        return m.getLoans().stream()
+                .filter(ln -> ln != null && !ln.isReturned())
+                .mapToInt(ln -> calculateLoanFine(ln, now))
+                .sum();
+    }
 
-            long overdueDays = ml.getOverdueDays(now);
-            if (overdueDays > 0) {
+    /**
+     * Calculates media loan fines using streams.
+     */
+    private int calculateMediaFinesStream(Member m, LocalDate now) {
+        return m.getMediaLoans().stream()
+                .filter(ml -> ml != null && !ml.isReturned())
+                .mapToInt(ml -> calculateMediaLoanFine(ml, now))
+                .sum();
+    }
 
-                FineStrategy strategy;
-
-                // CD = 20 NIS/day
-                if (ml.getMedia() instanceof CD) {
-                    strategy = new CDFineStrategy();
-                } else {
-                     // fallback = book
-                    strategy = new BookFineStrategy();
-                }
-
-                total += strategy.calculateFine((int) overdueDays);
-            }
+    /**
+     * Calculates fine for a single loan.
+     */
+    private int calculateLoanFine(loan ln, LocalDate now) {
+        long overdueDays = ln.getOverdueDays(now);
+        if (overdueDays <= 0) {
+            return 0;
         }
+        return new BookFineStrategy().calculateFine((int) overdueDays);
+    }
 
-        return total;
+    /**
+     * Calculates fine for a single media loan.
+     */
+    private int calculateMediaLoanFine(MediaLoan ml, LocalDate now) {
+        long overdueDays = ml.getOverdueDays(now);
+        if (overdueDays <= 0) {
+            return 0;
+        }
+        
+        FineStrategy strategy = ml.getMedia() instanceof CD 
+                ? new CDFineStrategy() 
+                : new BookFineStrategy();
+        
+        return strategy.calculateFine((int) overdueDays);
     }
 }
